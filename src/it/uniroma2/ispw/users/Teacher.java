@@ -3,7 +3,7 @@ package it.uniroma2.ispw.users;
 public class Teacher extends User {
 
     private String department;
-    private static final String ROLE = "TEACHER_ROLE";
+    public static final String ROLE = "TEACHER_ROLE";
 
     public Teacher(String username, String firstName, String lastName, String emailAddress, String department) {
         super(username, firstName, lastName, emailAddress);

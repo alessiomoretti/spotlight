@@ -8,7 +8,7 @@ public abstract class User {
     private String lastName;
     private String emailAddress;
 
-    private static final String ROLE = "GENERIC_USER";
+    public static final String ROLE = "GENERIC_USER";
 
 
 
@@ -56,10 +56,6 @@ public abstract class User {
 
     public void setEmailAddress(String emailAddress) {
         this.emailAddress = emailAddress;
-    }
-
-    public static String getROLE() {
-        return ROLE;
     }
 
 }

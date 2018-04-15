@@ -2,7 +2,7 @@ package it.uniroma2.ispw.users;
 
 public class InfoPointCrewMember extends User {
 
-    private static final String ROLE = "INFOPOINT_ROLE";
+    public static final String ROLE = "INFOPOINT_ROLE";
 
 
     public InfoPointCrewMember(String username, String firstName, String lastName, String emailAddress) {
