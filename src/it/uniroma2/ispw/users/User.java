@@ -1,4 +1,4 @@
-package it.uniroma2.ispw.entities.users;
+package it.uniroma2.ispw.users;
 
 public abstract class User {
 
@@ -10,14 +10,16 @@ public abstract class User {
 
     private static final String ROLE = "GENERIC_USER";
 
-    public User(String username, String firstName, String lastName, String emailAddress) {
-        this.setUsername(username);
-        this.setFirstName(firstName);
-        this.setLastName(lastName);
-        this.setEmailAddress(emailAddress);
-    }
+
 
     public User() { }
+
+    public User(String username, String firstName, String lastName, String emailAddress) {
+        this.username     = username;
+        this.firstName    = firstName;
+        this.lastName     = lastName;
+        this.emailAddress = emailAddress;
+    }
 
     public String getName() {
         return this.getLastName() + " " + this.getFirstName();

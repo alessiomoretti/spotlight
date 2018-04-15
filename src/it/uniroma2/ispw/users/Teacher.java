@@ -1,4 +1,4 @@
-package it.uniroma2.ispw.entities.users;
+package it.uniroma2.ispw.users;
 
 public class Teacher extends User {
 
