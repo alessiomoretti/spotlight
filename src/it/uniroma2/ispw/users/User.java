@@ -1,5 +1,9 @@
 package it.uniroma2.ispw.users;
 
+import it.uniroma2.ispw.Constants.*;
+
+import static it.uniroma2.ispw.Constants.*;
+
 public abstract class User {
 
 
@@ -8,7 +12,7 @@ public abstract class User {
     private String lastName;
     private String emailAddress;
 
-    public static final String ROLE = "GENERIC_USER";
+    public static final Integer ROLE = GENERIC_ROLE;
 
 
 

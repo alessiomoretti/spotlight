@@ -3,12 +3,9 @@ package it.uniroma2.ispw.database;
 import javax.swing.plaf.nimbus.State;
 import java.sql.*;
 
-public abstract class DAO {
+import static it.uniroma2.ispw.Constants.*;
 
-    private static final String DB_USER              = "dbuser";
-    private static final String DB_PWD               = "dbpassword";
-    private static final String DB_HOST              = "jdbc:postgresql://localhost:5432/spotlight";
-    private static final String DB_DRIVER_CLASS_NAME = "org.postgresql.Driver";
+public abstract class DAO {
 
     public DAO() { }
 

@@ -1,9 +1,11 @@
 package it.uniroma2.ispw.users;
 
+import static it.uniroma2.ispw.Constants.TEACHER_ROLE;
+
 public class Teacher extends User {
 
     private String department;
-    public static final String ROLE = "TEACHER_ROLE";
+    public static final Integer ROLE = TEACHER_ROLE;
 
     public Teacher(String username, String firstName, String lastName, String emailAddress, String department) {
         super(username, firstName, lastName, emailAddress);

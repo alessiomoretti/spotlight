@@ -6,6 +6,8 @@ import it.uniroma2.ispw.users.Teacher;
 import it.uniroma2.ispw.users.AdministrativeStaffMember;
 import it.uniroma2.ispw.users.User;
 
+import static it.uniroma2.ispw.Constants.*;
+
 import java.sql.*;
 
 public class UserDAO extends DAO {
@@ -30,21 +32,21 @@ public class UserDAO extends DAO {
             // check if any result is available
             if (results.first()) {
                 // creating user object according to role
-                switch (results.getString("role")) {
-                    case Teacher.ROLE:
+                switch (results.getInt("role")) {
+                    case TEACHER_ROLE:
                         return new Teacher(
                                 results.getString("username"),
                                 results.getString("firstname"),
                                 results.getString("lastname"),
                                 results.getString("email"),
                                 results.getString("department"));
-                    case AdministrativeStaffMember.ROLE:
+                    case ADMINISTRATIVE_ROLE:
                         return new AdministrativeStaffMember(
                                 results.getString("username"),
                                 results.getString("firstname"),
                                 results.getString("lastname"),
                                 results.getString("email"));
-                    case InfoPointCrewMember.ROLE:
+                    case INFOPOINT_ROLE:
                         return new InfoPointCrewMember(
                                 results.getString("username"),
                                 results.getString("firstname"),
