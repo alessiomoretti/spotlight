@@ -10,7 +10,7 @@ import static it.uniroma2.ispw.Constants.*;
 
 import java.sql.*;
 
-public class UserDAO extends DAO {
+public class UserDAO extends DAO<User> {
 
     public User authenticateUser(String username, String hashed_pwd) throws AuthServiceException {
 
@@ -68,5 +68,7 @@ public class UserDAO extends DAO {
     }
 
     @Override
-    public void update(Connection db, Object o) throws Exception { /* no implementation needed */ }
+    public void update(User o) throws Exception { /* no implementation needed */ }
+    @Override
+    public void delete(User o) throws Exception { /* no implementation needed */}
 }

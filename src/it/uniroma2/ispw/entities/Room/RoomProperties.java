@@ -34,7 +34,7 @@ public class RoomProperties {
         return interactiveWhiteboard;
     }
 
-    public boolean hasVideocallCapable() {
+    public boolean isVideocallCapable() {
         return videoCallCapable;
     }
 

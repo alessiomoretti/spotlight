@@ -1,10 +1,30 @@
 CREATE TABLE users (
-  id SERIAL,
-  username VARCHAR(100) NOT NULL,
-  password CHAR(32) NOT NULL,
-  firstname VARCHAR(100) NOT NULL,
-  lastname VARCHAR (100) NOT NULL,
-  email VARCHAR(100) NOT NULL,
-  department VARCHAR(100) NOT NULL,
-  role VARCHAR(100) NOT NULL
+  id                     SERIAL,
+  username               VARCHAR NOT NULL PRIMARY KEY,
+  password               CHAR(32) NOT NULL,
+  firstname              VARCHAR NOT NULL,
+  lastname               VARCHAR NOT NULL,
+  email                  VARCHAR NOT NULL,
+  department             VARCHAR NOT NULL,
+  role                   VARCHAR NOT NULL
+);
+
+CREATE TABLE rooms (
+  id                     SERIAL,
+  roomID                 VARCHAR NOT NULL PRIMARY KEY,
+  name                   VARCHAR NOT NULL,
+  department             VARCHAR NOT NULL,
+  capacity               INTEGER NOT NULL,
+  projector              INTEGER NOT NULL,
+  whiteboard             INTEGER NOT NULL,
+  int_whiteboard         INTEGER NOT NULL,
+  videocall_capable      INTEGER NOT NULL,
+  microphone             INTEGER NOT NULL
+);
+
+CREATE TABLE reservations (
+  id                     SERIAL,
+  roomID                 VARCHAR NOT NULL REFERENCES rooms(roomID),
+  start_timestamp        TIMESTAMP,
+  end_timestamp          TIMESTAMP
 );
