@@ -34,6 +34,7 @@ CREATE TABLE reservations (
 CREATE TABLE events (
   id                     SERIAL,
   eventID                VARCHAR NOT NULL PRIMARY KEY,
+  event_name             VARCHAR NOT NULL,
   start_timestamp        TIMESTAMP NOT NULL,
   end_timestamp          TIMESTAMP NOT NULL,
   referral               VARCHAR NOT NULL REFERENCES users(username),
