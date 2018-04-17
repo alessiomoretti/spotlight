@@ -24,11 +24,11 @@ public class UserDAO extends DAO<User> {
         }
 
         // preparing query
-        String params = "SELECT * FROM user WHERE username=" + username + " AND password=" + hashed_pwd;
+        String sql = "SELECT * FROM user WHERE username=" + username + " AND password=" + hashed_pwd;
 
         // retrieving results
         try {
-            ResultSet results = retrieve(db, params);
+            ResultSet results = retrieve(sql);
             // check if any result is available
             if (results.first()) {
                 // creating user object according to role
@@ -60,7 +60,7 @@ public class UserDAO extends DAO<User> {
             }
 
 
-        } catch (SQLException se) {
+        } catch (ClassNotFoundException | SQLException se) {
             se.printStackTrace();
             throw new AuthServiceException("Exception caught retrieving user list");
         }
