@@ -20,11 +20,8 @@ public abstract class DAO<T> {
         return db;
     }
 
-    public static void closeConnection(Connection db) throws SQLException {
-        db.close();
-    }
-
-    public ResultSet retrieve(Connection db, String query) throws SQLException {
+    public ResultSet retrieve(String query) throws ClassNotFoundException, SQLException {
+        Connection db = getConnection();
         Statement stmt = db.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
         ResultSet res = stmt.executeQuery(query);
 
