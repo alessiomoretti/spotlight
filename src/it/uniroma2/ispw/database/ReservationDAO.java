@@ -1,6 +1,7 @@
 package it.uniroma2.ispw.database;
 
 import it.uniroma2.ispw.entities.Room.Reservation;
+import it.uniroma2.ispw.exceptions.ReservationServiceException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,47 +15,60 @@ public class ReservationDAO extends DAO<Reservation> {
 
 
     @Override
-    public void update(Reservation reservation) throws ClassNotFoundException, SQLException {
+    public void update(Reservation reservation) throws ReservationServiceException {
 
-        // retrieving database connection
-        Connection db = getConnection();
+        try {
+            // retrieving database connection
+            Connection db = getConnection();
 
-        // preparing update sql
-        String sql = "INSERT INTO reservations (id, roomID, eventID, referral, start_timestamp, end_timestamp) VALUES (?, ?, ?, ?, ?, ?) " +
-                "ON CONFLICT (id) DO UPDATE " +
-                "SET start_timestamp = EXCLUDED.start_timestamp, end_timestamp = EXCLUDED.end_timestamp";
+            // preparing update sql
+            String sql = "INSERT INTO reservations (id, roomID, eventID, referral, start_timestamp, end_timestamp) VALUES (?, ?, ?, ?, ?, ?) " +
+                    "ON CONFLICT (id) DO UPDATE " +
+                    "SET start_timestamp = EXCLUDED.start_timestamp, end_timestamp = EXCLUDED.end_timestamp";
 
-        // preparing statement
-        PreparedStatement pstmt = db.prepareStatement(sql);
-        // executing the update routine
-        pstmt.setInt(1, Integer.valueOf(reservation.getReservationID()));
-        pstmt.setString(2, reservation.getRoomID());
-        pstmt.setString(3, reservation.getEventID());
-        pstmt.setString(4, reservation.getReferral());
-        pstmt.setTimestamp(5, new Timestamp(reservation.getStartDateTime().getTime()));
-        pstmt.setTimestamp(6, new Timestamp(reservation.getEndDateTime().getTime()));
-        pstmt.execute();
-        pstmt.close();
+            // preparing statement
+            PreparedStatement pstmt = db.prepareStatement(sql);
+            // executing the update routine
+            pstmt.setInt(1, Integer.valueOf(reservation.getReservationID()));
+            pstmt.setString(2, reservation.getRoomID());
+            pstmt.setString(3, reservation.getEventID());
+            pstmt.setString(4, reservation.getReferral());
+            pstmt.setTimestamp(5, new Timestamp(reservation.getStartDateTime().getTime()));
+            pstmt.setTimestamp(6, new Timestamp(reservation.getEndDateTime().getTime()));
+            pstmt.execute();
+            pstmt.close();
 
-        db.commit();
-        db.close();
+            db.commit();
+            db.close();
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+            throw new ReservationServiceException("Exception caught updating / creating a new reservation");
+        }
+
     }
 
     @Override
-    public void delete(Reservation reservation) throws ClassNotFoundException, SQLException {
+    public void delete(Reservation reservation) throws ReservationServiceException {
 
-        // retrieving database connection
-        Connection db = getConnection();
+        try {
+            // retrieving database connection
+            Connection db = getConnection();
 
-        // preparing the delete sql
-        String sql = "DELETE FROM reservation WHERE id=" + reservation.getReservationID();
+            // preparing the delete sql
+            String sql = "DELETE FROM reservation WHERE id=" + reservation.getReservationID();
 
-        // preparing statement
-        PreparedStatement pstmt = getConnection().prepareStatement(sql);
-        pstmt.execute();
-        pstmt.close();
+            // preparing statement
+            PreparedStatement pstmt = getConnection().prepareStatement(sql);
+            pstmt.execute();
+            pstmt.close();
 
-        db.commit();
-        db.close();
+            db.commit();
+            db.close();
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+            throw new ReservationServiceException("Exception deleting a reservation");
+        }
+
+
     }
 }

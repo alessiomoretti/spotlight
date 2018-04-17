@@ -3,6 +3,7 @@ package it.uniroma2.ispw.database;
 import it.uniroma2.ispw.entities.Room.Reservation;
 import it.uniroma2.ispw.entities.Room.Room;
 import it.uniroma2.ispw.entities.Room.RoomProperties;
+import it.uniroma2.ispw.exceptions.ReservationServiceException;
 import it.uniroma2.ispw.exceptions.RoomServiceException;
 
 import java.sql.ResultSet;
@@ -44,7 +45,8 @@ public class RoomDAO extends DAO<Room>{
             for (Reservation reservation : room.getReservations()) {
                 this.reservationDAO.update(reservation);
             }
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (ReservationServiceException e) {
+            e.printStackTrace();
             throw new RoomServiceException("Exception caught handling room update");
         }
 
