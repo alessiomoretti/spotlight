@@ -4,7 +4,7 @@ import static it.uniroma2.ispw.Constants.ADMINISTRATIVE_ROLE;
 
 public class AdministrativeStaffMember extends User {
 
-    public static final Integer ROLE = ADMINISTRATIVE_ROLE;
+    private Integer role = ADMINISTRATIVE_ROLE;
 
 
     public AdministrativeStaffMember(String username, String firstName, String lastName, String emailAddress) {
