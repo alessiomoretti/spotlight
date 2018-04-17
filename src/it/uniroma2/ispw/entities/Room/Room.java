@@ -5,13 +5,14 @@ import java.util.function.Consumer;
 
 public class Room {
 
-
+    private String roomID;
     private String roomName;
     private String roomDepartment;
     private ArrayList<Reservation> reservations;
     private RoomProperties properties;
 
-    public Room(String roomName, String roomDepartment, RoomProperties properties) {
+    public Room(String roomID, String roomName, String roomDepartment, RoomProperties properties) {
+        this.roomID         = roomID;
         this.roomName       = roomName;
         this.roomDepartment = roomDepartment;
         this.properties     = properties;
@@ -28,8 +29,12 @@ public class Room {
         getReservations().remove(reservation);
     }
 
-    public void clearReservation(Reservation reservation) {
+    public void clearReservation() {
         getReservations().clear();
+    }
+
+    public String getRoomID() {
+        return roomID;
     }
 
     public String getRoomName() {
