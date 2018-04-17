@@ -11,6 +11,8 @@ public class ReservationDAO extends DAO<Reservation> {
 
     public ReservationDAO() { }
 
+
+
     @Override
     public void update(Reservation reservation) throws ClassNotFoundException, SQLException {
 
@@ -20,7 +22,7 @@ public class ReservationDAO extends DAO<Reservation> {
         // preparing update sql
         String sql = "INSERT INTO reservations (id, roomID, eventID, referral, start_timestamp, end_timestamp) VALUES (?, ?, ?, ?, ?, ?) " +
                 "ON CONFLICT (id) DO UPDATE " +
-                "SET start = EXCLUDED.start, end = EXCLUDED.end";
+                "SET start_timestamp = EXCLUDED.start_timestamp, end_timestamp = EXCLUDED.end_timestamp";
 
         // preparing statement
         PreparedStatement pstmt = db.prepareStatement(sql);
@@ -39,7 +41,7 @@ public class ReservationDAO extends DAO<Reservation> {
     }
 
     @Override
-    public void delete(Reservation reservation) throws Exception {
+    public void delete(Reservation reservation) throws ClassNotFoundException, SQLException {
 
         // retrieving database connection
         Connection db = getConnection();
