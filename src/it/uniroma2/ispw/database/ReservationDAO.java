@@ -18,7 +18,7 @@ public class ReservationDAO extends DAO<Reservation> {
         Connection db = getConnection();
 
         // preparing update sql
-        String sql = "INSERT INTO reservations (id, roomID, start_timestamp, end_timestamp) VALUES (?, ?, ?, ?) " +
+        String sql = "INSERT INTO reservations (id, roomID, eventID, referral, start_timestamp, end_timestamp) VALUES (?, ?, ?, ?, ?, ?) " +
                 "ON CONFLICT (id) DO UPDATE " +
                 "SET start = EXCLUDED.start, end = EXCLUDED.end";
 
@@ -27,8 +27,10 @@ public class ReservationDAO extends DAO<Reservation> {
         // executing the update routine
         pstmt.setInt(1, Integer.valueOf(reservation.getReservationID()));
         pstmt.setString(2, reservation.getRoomID());
-        pstmt.setTimestamp(3, new Timestamp(reservation.getStartDateTime().getTime()));
-        pstmt.setTimestamp(4, new Timestamp(reservation.getEndDateTime().getTime()));
+        pstmt.setString(3, reservation.getEventID());
+        pstmt.setString(4, reservation.getReferral());
+        pstmt.setTimestamp(5, new Timestamp(reservation.getStartDateTime().getTime()));
+        pstmt.setTimestamp(6, new Timestamp(reservation.getEndDateTime().getTime()));
         pstmt.execute();
         pstmt.close();
 

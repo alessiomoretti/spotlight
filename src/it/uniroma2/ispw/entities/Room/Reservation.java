@@ -7,13 +7,15 @@ public class Reservation {
     private String reservationID;
     private String roomID;
     private String eventID;
+    private String referral;
     private Date startDateTime;
     private Date endDateTime;
 
-    public Reservation(String reservationID, String roomID, String eventID, Date startDateTime, Date endDateTime) {
+    public Reservation(String reservationID, String roomID, String eventID, String referral, Date startDateTime, Date endDateTime) {
         this.reservationID = reservationID;
         this.roomID        = roomID;
         this.eventID       = eventID;
+        this.referral      = referral;
         this.startDateTime = startDateTime;
         this.endDateTime   = endDateTime;
     }
@@ -40,6 +42,14 @@ public class Reservation {
 
     public void setEventID(String eventID) {
         this.eventID = eventID;
+    }
+
+    public String getReferral() {
+        return referral;
+    }
+
+    public void setReferral(String referral) {
+        this.referral = referral;
     }
 
     public Date getStartDateTime() {

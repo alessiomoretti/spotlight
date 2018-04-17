@@ -25,6 +25,8 @@ CREATE TABLE rooms (
 CREATE TABLE reservations (
   id                     SERIAL,
   roomID                 VARCHAR NOT NULL REFERENCES rooms(roomID),
-  start_timestamp        TIMESTAMP,
-  end_timestamp          TIMESTAMP
+  eventID                VARCHAR NOT NULL REFERENCES events(eventID),
+  referral               VARCHAR NOT NULL REFERENCES users(username),
+  start_timestamp        TIMESTAMP NOT NULL,
+  end_timestamp          TIMESTAMP NOT NULL
 );
