@@ -3,28 +3,73 @@ package it.uniroma2.ispw.database;
 import it.uniroma2.ispw.entities.Room.Reservation;
 import it.uniroma2.ispw.exceptions.ReservationServiceException;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.sql.*;
+import java.time.Instant;
+import java.util.ArrayList;
 
 public class ReservationDAO extends DAO<Reservation> {
 
     public ReservationDAO() { }
 
+    public ArrayList<Reservation> getReservationsByEventID(String eventID) throws ReservationServiceException {
 
+        // preparing query to retrieve all the reservations (present or future) related to a given event
+        String sql = "SELECT * FROM rooms WHERE eventID=" + eventID +
+                "AND start_time >= " + (new Timestamp(Instant.now().getEpochSecond()).toString());
+
+        // retrieving reservations
+        try {
+            ResultSet results = retrieve(sql);
+            return getReservationsFromResultSet(results);
+        } catch (ClassNotFoundException | SQLException se) {
+            se.printStackTrace();
+            throw new ReservationServiceException("Exception caught retrieving reservations related to event " + eventID);
+        }
+    }
+
+    public ArrayList<Reservation> getReservationsByRoomID(String roomID) throws ReservationServiceException {
+
+        // preparing query to retrieve all the reservations (present or future) related to a given event
+        String sql = "SELECT * FROM rooms WHERE roomID=" + roomID +
+                "AND start_time >= " + (new Timestamp(Instant.now().getEpochSecond()).toString());
+
+        // retrieving reservations
+        try {
+            ResultSet results = retrieve(sql);
+            return getReservationsFromResultSet(results);
+        } catch (ClassNotFoundException | SQLException se) {
+            se.printStackTrace();
+            throw new ReservationServiceException("Exception caught retrieving reservations related to room " + roomID);
+        }
+    }
+
+    public ArrayList<Reservation> getReservationsByReferral(String referral) throws ReservationServiceException {
+
+        // preparing query to retrieve all the reservations (present or future) related to a given referral
+        String sql = "SELECT * FROM rooms WHERE eventID=" + referral +
+                "AND start_time >= " + (new Timestamp(Instant.now().getEpochSecond()).toString());
+
+        // retrieving reservations
+        try {
+            ResultSet results = retrieve(sql);
+            return getReservationsFromResultSet(results);
+        } catch (ClassNotFoundException | SQLException se) {
+            se.printStackTrace();
+            throw new ReservationServiceException("Exception caught retrieving reservations related to referral " + referral);
+        }
+    }
 
     @Override
     public void update(Reservation reservation) throws ReservationServiceException {
 
+        // preparing update query
+        String sql = "INSERT INTO reservations (id, roomID, eventID, referral, start_timestamp, end_timestamp) VALUES (?, ?, ?, ?, ?, ?) " +
+                "ON CONFLICT (id) DO UPDATE " +
+                "SET start_timestamp = EXCLUDED.start_timestamp, end_timestamp = EXCLUDED.end_timestamp";
+
         try {
             // retrieving database connection
             Connection db = getConnection();
-
-            // preparing update sql
-            String sql = "INSERT INTO reservations (id, roomID, eventID, referral, start_timestamp, end_timestamp) VALUES (?, ?, ?, ?, ?, ?) " +
-                    "ON CONFLICT (id) DO UPDATE " +
-                    "SET start_timestamp = EXCLUDED.start_timestamp, end_timestamp = EXCLUDED.end_timestamp";
 
             // preparing statement
             PreparedStatement pstmt = db.prepareStatement(sql);
@@ -68,7 +113,18 @@ public class ReservationDAO extends DAO<Reservation> {
             e.printStackTrace();
             throw new ReservationServiceException("Exception deleting a reservation");
         }
+    }
 
-
+    public static ArrayList<Reservation> getReservationsFromResultSet(ResultSet results) throws SQLException {
+        ArrayList<Reservation> reservations = new ArrayList<>();
+        while (results.next()) {
+            reservations.add(new Reservation(results.getString("id"),
+                    results.getString("roomID"),
+                    results.getString("eventID"),
+                    results.getString("referral"),
+                    new Date(results.getTimestamp("start_time").getTime()),
+                    new Date(results.getTimestamp("end_time").getTime())));
+        }
+        return reservations;
     }
 }

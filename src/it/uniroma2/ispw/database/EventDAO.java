@@ -2,30 +2,61 @@ package it.uniroma2.ispw.database;
 
 import it.uniroma2.ispw.entities.Event;
 import it.uniroma2.ispw.exceptions.EventServiceException;
+import it.uniroma2.ispw.exceptions.UserRetrievalException;
+import it.uniroma2.ispw.users.User;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.sql.*;
 
 
 public class EventDAO extends DAO<Event> {
 
+    private UserDAO userDAO;
+
+    public EventDAO() {
+        this.userDAO = new UserDAO();
+    }
+
+    public Event getEventById(String eventID) throws UserRetrievalException, EventServiceException {
+
+        // preparing query to select the event for a given id
+        String sql = "SELECT * FROM events WHERE eventID=" + eventID;
+
+        // retrieving results
+        try {
+            ResultSet results = retrieve(sql);
+            if (results.first()) {
+                // if not empty result set, retrieving the referral as a User
+                User referralUser = userDAO.getUserByUsername(results.getString("referral"));
+
+                // returning the complete event object
+                return new Event(results.getString("eventID"),
+                        results.getString("event_name"),
+                        new Date(results.getTimestamp("start_time").getTime()),
+                        new Date(results.getTimestamp("end_time").getTime()),
+                        referralUser,
+                        results.getString("mailing_list"));
+            } else {
+                return null;
+            }
+        } catch (ClassNotFoundException | SQLException se) {
+            throw new EventServiceException("Exception caught retrieving event " + eventID);
+        }
+    }
+
     @Override
     public void update(Event event) throws EventServiceException {
+
+        // preparing update query
+        String sql = "INSERT INTO events (eventID, event_name, start_timestamp, end_timestamp, referral, mailing_list) VALUES (?, ?, ?, ?, ?, ?) " +
+                "ON CONFLICT (eventID) DO UPDATE " +
+                "SET event_name = EXCLUDED.event_name, " +
+                "start_timestamp = EXCLUDED.start_timestamp, " +
+                "end_timestamp = EXCLUDED.end_timestamp, " +
+                "mailing_list = EXCLUDED.mailing_list";
 
         try {
             // retrieving database connection
             Connection db = getConnection();
-
-            // preparing update sql
-            String sql = "INSERT INTO events (eventID, event_name, start_timestamp, end_timestamp, referral, mailing_list) VALUES (?, ?, ?, ?, ?, ?) " +
-                    "ON CONFLICT (eventID) DO UPDATE " +
-                    "SET event_name = EXCLUDED.event_name, " +
-                    "start_timestamp = EXCLUDED.start_timestamp, " +
-                    "end_timestamp = EXCLUDED.end_timestamp, " +
-                    "mailing_list = EXCLUDED.mailing_list";
-
 
             // preparing statement
             PreparedStatement pstmt = db.prepareStatement(sql);
@@ -52,12 +83,12 @@ public class EventDAO extends DAO<Event> {
     @Override
     public void delete(Event event) throws EventServiceException {
 
+        // preparing the delete query
+        String sql = "DELETE FROM events WHERE eventID=" + event.getEventID();
+
         try {
             // retrieving database connection
             Connection db = getConnection();
-
-            // preparing the delete sql
-            String sql = "DELETE FROM events WHERE eventID=" + event.getEventID();
 
             // preparing statement
             PreparedStatement pstmt = getConnection().prepareStatement(sql);
@@ -68,7 +99,7 @@ public class EventDAO extends DAO<Event> {
             db.close();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
-            throw new EventServiceException("Exception caught deleting an event");
+            throw new EventServiceException("Exception caught deleting event " + event.getEventID());
         }
 
 
