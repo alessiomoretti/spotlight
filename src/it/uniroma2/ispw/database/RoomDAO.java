@@ -29,7 +29,7 @@ public class RoomDAO extends DAO<Room>{
 
         // retrieving results filtered by room properties
         try {
-            ResultSet result = retrieve(getConnection(), sql);
+            ResultSet result = retrieve(sql);
             return result;
         } catch (ClassNotFoundException | SQLException e) {
             throw new RoomServiceException("Exception caught handling rooms retrieval");
