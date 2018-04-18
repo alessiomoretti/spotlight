@@ -23,7 +23,7 @@ CREATE TABLE rooms (
 );
 
 CREATE TABLE reservations (
-  id                     SERIAL,
+  resID                  VARCHAR NOT NULL PRIMARY KEY,
   roomID                 VARCHAR NOT NULL REFERENCES rooms(roomID),
   eventID                VARCHAR NOT NULL REFERENCES events(eventID),
   referral               VARCHAR NOT NULL REFERENCES users(username),

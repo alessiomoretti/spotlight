@@ -14,7 +14,6 @@ import java.sql.*;
 public class UserDAO extends DAO<User> {
 
     public User getUserByUsername(String username) throws UserRetrievalException {
-
         // preparing query to retrieve the user with the given username
         String sql = "SELECT 1 FROM users WHERE username=" + username;
 
@@ -29,7 +28,6 @@ public class UserDAO extends DAO<User> {
     }
 
     public User authenticateUser(String username, String hashed_pwd) throws AuthServiceException {
-
         // preparing query to authenticate user
         String sql = "SELECT 1 FROM users WHERE username=" + username + " AND password=" + hashed_pwd;
 
@@ -45,7 +43,6 @@ public class UserDAO extends DAO<User> {
     }
 
     public static User createUserFromResultSet(ResultSet results) throws SQLException {
-
         // check if result set is not empty
         if (!results.first())
             return null;

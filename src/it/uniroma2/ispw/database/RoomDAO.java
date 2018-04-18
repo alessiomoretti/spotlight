@@ -6,7 +6,6 @@ import it.uniroma2.ispw.entities.Room.RoomProperties;
 import it.uniroma2.ispw.exceptions.ReservationServiceException;
 import it.uniroma2.ispw.exceptions.RoomServiceException;
 
-import java.sql.Array;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -21,7 +20,6 @@ public class RoomDAO extends DAO<Room>{
     }
 
     public Room getRoomByID(String roomID) throws RoomServiceException, ReservationServiceException {
-
         // preparing query to retrieve the room
         String sql = "SELECT 1 FROM rooms WHERE roomID=" + roomID;
 
@@ -36,28 +34,62 @@ public class RoomDAO extends DAO<Room>{
         }
     }
 
-    public ResultSet getRoomsByProperties(RoomProperties properties) throws RoomServiceException {
-
+    public ArrayList<Room> getRoomsByProperties(RoomProperties properties) throws RoomServiceException {
         // preparing sql
         String sql = "SELECT * FROM rooms WHERE " +
                      "capacity >= "  + String.valueOf(properties.getCapacity()) + " AND " +
-                     "projector = "  + String.valueOf(properties.hasProjector() ? 1 : 0)  +
-                     "whiteboard = " + String.valueOf(properties.hasWhiteboard() ? 1 : 0) +
-                     "int_whiteboard = " + String.valueOf(properties.hasInteractiveWhiteboard() ? 1 : 0) +
-                     "videocall_capable = " + String.valueOf(properties.isVideocallCapable() ? 1 : 0) +
+                     "projector = "  + String.valueOf(properties.hasProjector() ? 1 : 0)  + " AND " +
+                     "whiteboard = " + String.valueOf(properties.hasWhiteboard() ? 1 : 0) + " AND " +
+                     "int_whiteboard = " + String.valueOf(properties.hasInteractiveWhiteboard() ? 1 : 0) + " AND " +
+                     "videocall_capable = " + String.valueOf(properties.isVideocallCapable() ? 1 : 0) + " AND " +
                      "microphone = " + String.valueOf(properties.hasMicrophone() ? 1 : 0);
 
         // retrieving results filtered by room properties
         try {
-            ResultSet result = retrieve(sql);
-            return result;
+            ArrayList<Room> rooms = new ArrayList<>();
+
+            ResultSet results = retrieve(sql);
+            while (results.next()) {
+                rooms.add(createRoomFromResultSet(results));
+            }
+
+            return rooms;
+        } catch (ClassNotFoundException | SQLException e) {
+            throw new RoomServiceException("Exception caught handling rooms retrieval");
+        }
+    }
+
+    public ArrayList<Room> getRoomsByPropertiesAndDepartment(RoomProperties properties, String department) throws RoomServiceException, ReservationServiceException {
+        // preparing sql
+        String sql = "SELECT * FROM rooms WHERE " +
+                "department=" + department + " AND " +
+                "capacity >= "  + String.valueOf(properties.getCapacity()) + " AND " +
+                "projector = "  + String.valueOf(properties.hasProjector() ? 1 : 0)  + " AND " +
+                "whiteboard = " + String.valueOf(properties.hasWhiteboard() ? 1 : 0) + " AND " +
+                "int_whiteboard = " + String.valueOf(properties.hasInteractiveWhiteboard() ? 1 : 0) + " AND " +
+                "videocall_capable = " + String.valueOf(properties.isVideocallCapable() ? 1 : 0) + " AND " +
+                "microphone = " + String.valueOf(properties.hasMicrophone() ? 1 : 0);
+
+        // retrieving results filtered by room properties
+        try {
+            ArrayList<Room> rooms = new ArrayList<>();
+
+            // retrieving rooms
+            ResultSet results = retrieve(sql);
+            while (results.next()) {
+                Room room = createRoomFromResultSet(results);
+                // adding reservations
+                for (Reservation reservation : reservationDAO.getReservationsByRoomID(room.getRoomID()))
+                    room.addReservation(reservation);
+            }
+
+            return rooms;
         } catch (ClassNotFoundException | SQLException e) {
             throw new RoomServiceException("Exception caught handling rooms retrieval");
         }
     }
 
     public ArrayList<Room> getRoomsByReferral(String referral) throws RoomServiceException, ReservationServiceException {
-
         HashMap<String, Room> room_map = new HashMap<>();                           // auxiliary HashMap<roomID, room>
 
         // retrieving all the reservations related to the given referral
@@ -65,7 +97,9 @@ public class RoomDAO extends DAO<Room>{
         ArrayList<Reservation> reservations = reservationDAO.getReservationsByReferral(referral);
         for (Reservation reservation : reservations) {
             if (room_map.containsKey(reservation.getRoomID()))
-                room_map.get(reservation.getRoomID()).addReservation(reservation);
+                // add only if user is the referral
+                if (reservation.getReferral().equals(referral))
+                    room_map.get(reservation.getRoomID()).addReservation(reservation);
             else {
                 Room r = getRoomByID(reservation.getRoomID());
                 r.addReservation(reservation);
@@ -78,7 +112,6 @@ public class RoomDAO extends DAO<Room>{
     }
 
     public ArrayList<Room> getRoomsByEvent(String eventID) throws RoomServiceException, ReservationServiceException {
-
         HashMap<String, Room> room_map = new HashMap<>();                           // auxiliary HashMap<roomID, room>
 
         // retrieving all the reservations related to the given event
@@ -86,7 +119,9 @@ public class RoomDAO extends DAO<Room>{
         ArrayList<Reservation> reservations = reservationDAO.getReservationsByEventID(eventID);
         for (Reservation reservation : reservations) {
             if (room_map.containsKey(reservation.getRoomID()))
-                room_map.get(reservation.getRoomID()).addReservation(reservation);
+                // add only if event is the one associated with the search
+                if (reservation.getEventID().equals(eventID))
+                    room_map.get(reservation.getRoomID()).addReservation(reservation);
             else {
                 Room r = getRoomByID(reservation.getRoomID());
                 r.addReservation(reservation);
@@ -117,7 +152,6 @@ public class RoomDAO extends DAO<Room>{
     public void delete(Room room) throws Exception { /* no implementation needed */}
 
     public Room createRoomFromResultSet(ResultSet results) throws SQLException {
-
         // check if result set is not empty
         if (!results.first())
             return null;

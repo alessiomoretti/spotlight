@@ -18,7 +18,6 @@ public class EventDAO extends DAO<Event> {
     }
 
     public Event getEventById(String eventID) throws UserRetrievalException, EventServiceException {
-
         // preparing query to select the event for a given id
         String sql = "SELECT * FROM events WHERE eventID=" + eventID;
 
@@ -36,7 +35,6 @@ public class EventDAO extends DAO<Event> {
     }
 
     public ArrayList<Event> getEventsByReferral(User referral) throws EventServiceException {
-
         // preparing query to select the event for a given referral
         String sql = "SELECT * FROM events WHERE referral=" + referral.getUsername();
 
@@ -55,7 +53,6 @@ public class EventDAO extends DAO<Event> {
 
     @Override
     public void update(Event event) throws EventServiceException {
-
         // preparing update query
         String sql = "INSERT INTO events (eventID, event_name, start_timestamp, end_timestamp, referral, mailing_list) VALUES (?, ?, ?, ?, ?, ?) " +
                 "ON CONFLICT (eventID) DO UPDATE " +
@@ -92,7 +89,6 @@ public class EventDAO extends DAO<Event> {
 
     @Override
     public void delete(Event event) throws EventServiceException {
-
         // preparing the delete query
         String sql = "DELETE FROM events WHERE eventID=" + event.getEventID();
 

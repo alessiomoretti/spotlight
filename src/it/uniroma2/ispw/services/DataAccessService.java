@@ -20,8 +20,15 @@ public abstract class DataAccessService<T> {
     }
 
     public boolean hasCapability(User user) {
-
         // check if user has the required capability to operate with this service
         return user.getRole() >= minRoleRequired;
+    }
+
+    public void setDatabaseInterface(DAO<T> databaseInterface) {
+        this.databaseInterface = databaseInterface;
+    }
+
+    public DAO<T> getDatabaseInterface() {
+        return this.databaseInterface;
     }
 }
