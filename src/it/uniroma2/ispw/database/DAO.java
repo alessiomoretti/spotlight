@@ -1,6 +1,5 @@
 package it.uniroma2.ispw.database;
 
-import javax.swing.plaf.nimbus.State;
 import java.sql.*;
 
 import static it.uniroma2.ispw.Constants.*;

@@ -116,7 +116,7 @@ public class RoomDAO extends DAO<Room>{
     @Override
     public void delete(Room room) throws Exception { /* no implementation needed */}
 
-    public static Room createRoomFromResultSet(ResultSet results) throws SQLException {
+    public Room createRoomFromResultSet(ResultSet results) throws SQLException {
 
         // check if result set is not empty
         if (!results.first())

@@ -115,7 +115,7 @@ public class ReservationDAO extends DAO<Reservation> {
         }
     }
 
-    public static ArrayList<Reservation> getReservationsFromResultSet(ResultSet results) throws SQLException {
+    public ArrayList<Reservation> getReservationsFromResultSet(ResultSet results) throws SQLException {
         ArrayList<Reservation> reservations = new ArrayList<>();
         while (results.next()) {
             reservations.add(new Reservation(results.getString("id"),

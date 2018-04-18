@@ -6,6 +6,7 @@ import it.uniroma2.ispw.exceptions.UserRetrievalException;
 import it.uniroma2.ispw.users.User;
 
 import java.sql.*;
+import java.util.ArrayList;
 
 
 public class EventDAO extends DAO<Event> {
@@ -25,21 +26,30 @@ public class EventDAO extends DAO<Event> {
         try {
             ResultSet results = retrieve(sql);
             if (results.first()) {
-                // if not empty result set, retrieving the referral as a User
-                User referralUser = userDAO.getUserByUsername(results.getString("referral"));
-
-                // returning the complete event object
-                return new Event(results.getString("eventID"),
-                        results.getString("event_name"),
-                        new Date(results.getTimestamp("start_time").getTime()),
-                        new Date(results.getTimestamp("end_time").getTime()),
-                        referralUser,
-                        results.getString("mailing_list"));
+                return getEventsFromResultSet(results).get(0); // get the first element (only one result)
             } else {
                 return null;
             }
         } catch (ClassNotFoundException | SQLException se) {
             throw new EventServiceException("Exception caught retrieving event " + eventID);
+        }
+    }
+
+    public ArrayList<Event> getEventsByReferral(User referral) throws EventServiceException {
+
+        // preparing query to select the event for a given referral
+        String sql = "SELECT * FROM events WHERE referral=" + referral.getUsername();
+
+        // retrieving results
+        try {
+            ResultSet results = retrieve(sql);
+            if (results.first()) {
+                return getEventsFromResultSet(results, referral); // get the first element (only one result)
+            } else {
+                return null;
+            }
+        } catch (ClassNotFoundException | SQLException se) {
+            throw new EventServiceException("Exception caught retrieving event referred by " + referral.getUsername());
         }
     }
 
@@ -101,7 +111,34 @@ public class EventDAO extends DAO<Event> {
             e.printStackTrace();
             throw new EventServiceException("Exception caught deleting event " + event.getEventID());
         }
+    }
 
+    public ArrayList<Event> getEventsFromResultSet(ResultSet results) throws SQLException, UserRetrievalException{
+        ArrayList<Event> events = new ArrayList<>();
+        while (results.next()) {
+            // retrieving the referral as a User
+            User referralUser = userDAO.getUserByUsername(results.getString("referral"));
 
+            events.add(new Event(results.getString("eventID"),
+                    results.getString("event_name"),
+                    new Date(results.getTimestamp("start_time").getTime()),
+                    new Date(results.getTimestamp("end_time").getTime()),
+                    referralUser,
+                    results.getString("mailing_list")));
+        }
+        return events;
+    }
+
+    public ArrayList<Event> getEventsFromResultSet(ResultSet results, User referral) throws SQLException {
+        ArrayList<Event> events = new ArrayList<>();
+        while (results.next()) {
+            events.add(new Event(results.getString("eventID"),
+                    results.getString("event_name"),
+                    new Date(results.getTimestamp("start_time").getTime()),
+                    new Date(results.getTimestamp("end_time").getTime()),
+                    referral,
+                    results.getString("mailing_list")));
+        }
+        return events;
     }
 }
