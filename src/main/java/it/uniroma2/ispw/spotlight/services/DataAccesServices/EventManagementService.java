@@ -3,6 +3,7 @@ package it.uniroma2.ispw.spotlight.services.DataAccesServices;
 import it.uniroma2.ispw.spotlight.Constants;
 import it.uniroma2.ispw.spotlight.database.EventDAO;
 import it.uniroma2.ispw.spotlight.database.ReservationDAO;
+import it.uniroma2.ispw.spotlight.database.RoomDAO;
 import it.uniroma2.ispw.spotlight.entities.Event;
 import it.uniroma2.ispw.spotlight.exceptions.AuthRequiredException;
 import it.uniroma2.ispw.spotlight.exceptions.EventServiceException;
@@ -16,43 +17,51 @@ public class EventManagementService extends DataAccessService<Event> {
     private Integer minRoleRequired = Constants.TEACHER_ROLE;
     private Event currentEvent;
 
-    private ReservationDAO reservationDAO;
+    private RoomManagementService roomManagementService;
     private UserEventLookupService eventLookupService;
 
     public EventManagementService() {
         // setting correct DAO to access event database
         setDatabaseInterface(new EventDAO());
         // setting reservation DAO
-        this.reservationDAO = new ReservationDAO();
+        this.roomManagementService = new RoomManagementService();   // TODO singleton
         // setting event lookup service
-        this.eventLookupService = new UserEventLookupService();
+        this.eventLookupService    = new UserEventLookupService(); // TODO singleton
     }
 
-    public void createNewEvent(String eventName) {
-        // generating eventID
-        String newEventID = eventName + "-" + getCurrentUser().getUsername() + "-" + String.valueOf(Instant.now().getEpochSecond());
-        // generating new event
-        setCurrentEvent(new Event(newEventID, eventName, getCurrentUser()));
+    public void createNewEvent(String eventName) throws AuthRequiredException {
+        if (hasCapability(getCurrentUser())) {
+            // generating eventID
+            String newEventID = eventName + "-" + getCurrentUser().getUsername() + "-" + String.valueOf(Instant.now().getEpochSecond());
+            // generating new event
+            setCurrentEvent(new Event(newEventID, eventName, getCurrentUser()));
+        } else {
+            throw new AuthRequiredException("This user has no privileges to access this service");
+        }
     }
 
     public ArrayList<Event> getUserEvents() throws EventServiceException, AuthRequiredException {
         return getEventLookupService().getCurrentUserEvents();
     }
 
-    public Event selectEvent(String eventID) throws EventServiceException, UserRetrievalException {
-        Event event = ((EventDAO) getEventLookupService().getDatabaseInterface()).getEventById(eventID);
-        if (event.getReferral().getUsername().equals(getCurrentUser().getUsername()))
-            return event;
-        else
-            return null;
-    }
-
-    public void updateEvent(Event event) {
-
+    public Event selectEvent(String eventID) throws EventServiceException, UserRetrievalException, AuthRequiredException {
+        if (hasCapability(getCurrentUser())) {
+            Event event = ((EventDAO) getEventLookupService().getDatabaseInterface()).getEventById(eventID);
+            if (event.getReferral().getUsername().equals(getCurrentUser().getUsername()))
+                return event;
+            else
+                return null;
+        } else {
+            throw new AuthRequiredException("This user has no privileges to access this service");
+        }
     }
 
     public ReservationDAO getReservationDAO() {
-        return reservationDAO;
+        return roomManagementService.getReservationDAO();
+    }
+
+    public RoomDAO getRoomDAO() {
+        return (RoomDAO) roomManagementService.getDatabaseInterface();
     }
 
     public UserEventLookupService getEventLookupService() {
