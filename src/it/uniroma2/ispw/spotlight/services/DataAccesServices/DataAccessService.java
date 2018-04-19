@@ -1,16 +1,14 @@
-package it.uniroma2.ispw.services;
+package it.uniroma2.ispw.spotlight.services.DataAccesServices;
 
-import it.uniroma2.ispw.database.DAO;
-import it.uniroma2.ispw.exceptions.AuthRequiredException;
-import it.uniroma2.ispw.users.User;
-
-import static it.uniroma2.ispw.Constants.*;
+import it.uniroma2.ispw.spotlight.Constants;
+import it.uniroma2.ispw.spotlight.database.DAO;
+import it.uniroma2.ispw.spotlight.users.User;
 
 public abstract class DataAccessService<T> {
 
     private DAO<T> databaseInterface;
     private User currentUser;
-    private Integer minRoleRequired = GENERIC_ROLE;
+    private Integer minRoleRequired = Constants.GENERIC_ROLE;
 
     public DataAccessService() { }
 

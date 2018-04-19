@@ -1,24 +1,23 @@
-package it.uniroma2.ispw.services;
+package it.uniroma2.ispw.spotlight.services.DataAccesServices;
 
-import it.uniroma2.ispw.database.ReservationDAO;
-import it.uniroma2.ispw.database.RoomDAO;
-import it.uniroma2.ispw.entities.Room.Reservation;
-import it.uniroma2.ispw.entities.Room.Room;
-import it.uniroma2.ispw.entities.Room.RoomProperties;
-import it.uniroma2.ispw.exceptions.AuthRequiredException;
-import it.uniroma2.ispw.exceptions.ReservationServiceException;
-import it.uniroma2.ispw.exceptions.RoomServiceException;
+import it.uniroma2.ispw.spotlight.Constants;
+import it.uniroma2.ispw.spotlight.entities.Room.Reservation;
+import it.uniroma2.ispw.spotlight.entities.Room.Room;
+import it.uniroma2.ispw.spotlight.entities.Room.RoomProperties;
+import it.uniroma2.ispw.spotlight.exceptions.AuthRequiredException;
+import it.uniroma2.ispw.spotlight.exceptions.RoomServiceException;
+import it.uniroma2.ispw.spotlight.database.ReservationDAO;
+import it.uniroma2.ispw.spotlight.database.RoomDAO;
+import it.uniroma2.ispw.spotlight.exceptions.ReservationServiceException;
 
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 
-import static it.uniroma2.ispw.Constants.*;
-
 public class RoomManagementService extends DataAccessService<Room> {
 
-    private Integer minRoleRequired = TEACHER_ROLE;
+    private Integer minRoleRequired = Constants.TEACHER_ROLE;
     private ReservationDAO reservationDAO;
 
     public RoomManagementService() {
@@ -54,7 +53,7 @@ public class RoomManagementService extends DataAccessService<Room> {
         }
 
         // check if user can be pre-emptive (ADMINISTRATIVE)
-        if (getCurrentUser().getRole() >= ADMINISTRATIVE_ROLE) {
+        if (getCurrentUser().getRole() >= Constants.ADMINISTRATIVE_ROLE) {
             Room room = allRooms.get(0);
             // check for conflicting timeslots
             ArrayList<Reservation> conflicts = new ArrayList<>();

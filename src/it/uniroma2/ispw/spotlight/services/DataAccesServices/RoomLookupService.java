@@ -1,19 +1,18 @@
-package it.uniroma2.ispw.services;
+package it.uniroma2.ispw.spotlight.services.DataAccesServices;
 
-import it.uniroma2.ispw.database.RoomDAO;
-import it.uniroma2.ispw.entities.Room.Room;
-import it.uniroma2.ispw.entities.Room.RoomProperties;
-import it.uniroma2.ispw.exceptions.AuthRequiredException;
-import it.uniroma2.ispw.exceptions.ReservationServiceException;
-import it.uniroma2.ispw.exceptions.RoomServiceException;
+import it.uniroma2.ispw.spotlight.Constants;
+import it.uniroma2.ispw.spotlight.entities.Room.Room;
+import it.uniroma2.ispw.spotlight.entities.Room.RoomProperties;
+import it.uniroma2.ispw.spotlight.exceptions.AuthRequiredException;
+import it.uniroma2.ispw.spotlight.exceptions.RoomServiceException;
+import it.uniroma2.ispw.spotlight.database.RoomDAO;
+import it.uniroma2.ispw.spotlight.exceptions.ReservationServiceException;
 
 import java.util.ArrayList;
 
-import static it.uniroma2.ispw.Constants.*;
-
 public class RoomLookupService extends DataAccessService<Room> {
 
-    private Integer minRoleRequired = TEACHER_ROLE;
+    private Integer minRoleRequired = Constants.TEACHER_ROLE;
 
     public RoomLookupService() {
         // setting correct DAO to access rooms database
