@@ -1,5 +1,6 @@
 package it.uniroma2.ispw.spotlight.services;
 
+import it.uniroma2.ispw.spotlight.exceptions.AuthRequiredException;
 import it.uniroma2.ispw.spotlight.services.DataAccesServices.*;
 
 public class ServiceManager {
@@ -19,33 +20,45 @@ public class ServiceManager {
         return loginService;
     }
 
-    public EventLookupService getEventLookupService() {
-        if (this.eventLookupService == null)
+    public EventLookupService getEventLookupService() throws AuthRequiredException {
+        if (this.eventLookupService == null) {
             eventLookupService = new EventLookupService();
+            eventLookupService.setCurrentUser(getLoginService().getCurrentUser());
+        }
         return eventLookupService;
     }
 
-    public UserEventLookupService getUserEventLookupService() {
-        if (this.userEventLookupService == null)
+    public UserEventLookupService getUserEventLookupService() throws AuthRequiredException {
+        if (this.userEventLookupService == null) {
             userEventLookupService = new UserEventLookupService();
+            userEventLookupService.setCurrentUser(getLoginService().getCurrentUser());
+        }
         return userEventLookupService;
     }
 
-    public EventManagementService getEventManagementService() {
-        if (this.eventManagementService == null)
+    public EventManagementService getEventManagementService() throws AuthRequiredException {
+        if (this.eventManagementService == null) {
             eventManagementService = new EventManagementService();
+            eventManagementService.setCurrentUser(getLoginService().getCurrentUser());
+            eventManagementService.setEventLookupService(getUserEventLookupService());
+            eventManagementService.setRoomManagementService(getRoomManagementService());
+        }
         return eventManagementService;
     }
 
-    public RoomLookupService getRoomLookupService() {
-        if (this.roomLookupService == null)
+    public RoomLookupService getRoomLookupService() throws AuthRequiredException {
+        if (this.roomLookupService == null) {
             roomLookupService = new RoomLookupService();
+            roomLookupService.setCurrentUser(getLoginService().getCurrentUser());
+        }
         return roomLookupService;
     }
 
-    public RoomManagementService getRoomManagementService() {
-        if (this.roomManagementService == null)
+    public RoomManagementService getRoomManagementService() throws AuthRequiredException {
+        if (this.roomManagementService == null) {
             roomManagementService = new RoomManagementService();
+            roomManagementService.setCurrentUser(getLoginService().getCurrentUser());
+        }
         return roomManagementService;
     }
 

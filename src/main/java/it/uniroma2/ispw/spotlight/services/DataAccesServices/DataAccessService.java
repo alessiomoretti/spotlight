@@ -2,6 +2,7 @@ package it.uniroma2.ispw.spotlight.services.DataAccesServices;
 
 import it.uniroma2.ispw.spotlight.Constants;
 import it.uniroma2.ispw.spotlight.database.DAO;
+import it.uniroma2.ispw.spotlight.exceptions.AuthRequiredException;
 import it.uniroma2.ispw.spotlight.users.User;
 
 public abstract class DataAccessService<T> {
@@ -12,9 +13,13 @@ public abstract class DataAccessService<T> {
 
     public DataAccessService() { }
 
-    public User getCurrentUser() {
-        return currentUser;
-        // TODO singleton call to retrieve an instance of LoginService
+    public void setCurrentUser(User user) {
+        this.currentUser = user;
+    }
+
+    public User getCurrentUser() throws AuthRequiredException {
+        if (currentUser == null) throw new AuthRequiredException("No user is logged");
+        else return currentUser;
     }
 
     public boolean hasCapability(User user) {

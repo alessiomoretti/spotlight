@@ -23,10 +23,6 @@ public class EventManagementService extends DataAccessService<Event> {
     public EventManagementService() {
         // setting correct DAO to access event database
         setDatabaseInterface(new EventDAO());
-        // setting reservation DAO
-        this.roomManagementService = new RoomManagementService();   // TODO singleton
-        // setting event lookup service
-        this.eventLookupService    = new UserEventLookupService(); // TODO singleton
     }
 
     public void createNewEvent(String eventName) throws AuthRequiredException {
@@ -74,6 +70,14 @@ public class EventManagementService extends DataAccessService<Event> {
 
     public void setCurrentEvent(Event currentEvent) {
         this.currentEvent = currentEvent;
+    }
+
+    public void setRoomManagementService(RoomManagementService roomManagementService) {
+        this.roomManagementService = roomManagementService;
+    }
+
+    public void setEventLookupService(UserEventLookupService eventLookupService) {
+        this.eventLookupService = eventLookupService;
     }
 
 }
