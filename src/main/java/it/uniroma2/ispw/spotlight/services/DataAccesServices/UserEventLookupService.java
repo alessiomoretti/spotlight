@@ -14,7 +14,7 @@ public class UserEventLookupService  extends EventLookupService {
     private Integer minRoleRequired = Constants.TEACHER_ROLE;
 
     public UserEventLookupService() {
-        // setting correct DAO to access rooms database
+        // setting correct DAO to access event database
         setDatabaseInterface(new EventDAO());
     }
 

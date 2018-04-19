@@ -8,7 +8,6 @@ import java.util.Date;
 
 public class Event {
 
-
     private String eventID;
     private String eventName;
     private Date startDateTime;
@@ -27,6 +26,12 @@ public class Event {
 
         // initializing array of reserved Rooms
         this.reservedRooms = new ArrayList<>();
+    }
+
+    public Event(String eventID, String eventName, User referral) {
+        this.eventID   = eventID;
+        this.eventName = eventName;
+        this.referral  = referral;
     }
 
     public void addReservedRoom(Room room) {

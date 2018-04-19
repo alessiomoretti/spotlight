@@ -15,7 +15,7 @@ public class EventLookupService extends DataAccessService<Event> {
     private Integer minRoleRequired = Constants.INFOPOINT_ROLE;
 
     public EventLookupService() {
-        // setting correct DAO to access rooms database
+        // setting correct DAO to access event database
         setDatabaseInterface(new EventDAO());
     }
 
