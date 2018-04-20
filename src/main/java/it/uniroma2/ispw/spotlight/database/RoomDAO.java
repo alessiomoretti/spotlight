@@ -6,10 +6,14 @@ import it.uniroma2.ispw.spotlight.entities.Room.RoomProperties;
 import it.uniroma2.ispw.spotlight.exceptions.RoomServiceException;
 import it.uniroma2.ispw.spotlight.exceptions.ReservationServiceException;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import static java.sql.ResultSet.TYPE_SCROLL_INSENSITIVE;
 
 public class RoomDAO extends DAO<Room>{
 
@@ -21,13 +25,19 @@ public class RoomDAO extends DAO<Room>{
 
     public Room getRoomByID(String roomID) throws RoomServiceException, ReservationServiceException {
         // preparing query to retrieve the room
-        String sql = "SELECT 1 FROM rooms WHERE roomID=" + roomID;
+        String sql = "SELECT * FROM rooms WHERE roomID=?";
 
         // retrieving results (no reservation info will be available)
         try {
-            ResultSet results = retrieve(sql);
-            return createRoomFromResultSet(results);
+            // retrieving database connection
+            Connection db = getConnection();
 
+            // preparing statement
+            PreparedStatement pstm = db.prepareStatement(sql, TYPE_SCROLL_INSENSITIVE, NO_GENERATED_KEYS);
+            pstm.setString(1, roomID);
+
+            ResultSet results = pstm.executeQuery();
+            return createRoomFromResultSet(results);
         } catch (ClassNotFoundException | SQLException se) {
             se.printStackTrace();
             throw new RoomServiceException("Exception caught retrieving room " + roomID);
@@ -36,19 +46,27 @@ public class RoomDAO extends DAO<Room>{
 
     public ArrayList<Room> getRoomsByProperties(RoomProperties properties) throws RoomServiceException {
         // preparing sql
-        String sql = "SELECT * FROM rooms WHERE " +
-                     "capacity >= "  + String.valueOf(properties.getCapacity()) + " AND " +
-                     "projector = "  + String.valueOf(properties.hasProjector() ? 1 : 0)  + " AND " +
-                     "whiteboard = " + String.valueOf(properties.hasWhiteboard() ? 1 : 0) + " AND " +
-                     "int_whiteboard = " + String.valueOf(properties.hasInteractiveWhiteboard() ? 1 : 0) + " AND " +
-                     "videocall_capable = " + String.valueOf(properties.isVideocallCapable() ? 1 : 0) + " AND " +
-                     "microphone = " + String.valueOf(properties.hasMicrophone() ? 1 : 0);
+        String sql = "SELECT * FROM rooms WHERE capacity >= ? AND projector = ? AND whiteboard = ? AND int_whiteboard = ?" +
+                     "AND videocall_capable = ? AND microphone = ?";
 
         // retrieving results filtered by room properties
         try {
             ArrayList<Room> rooms = new ArrayList<>();
 
-            ResultSet results = retrieve(sql);
+            // retrieving database connection
+            Connection db = getConnection();
+
+            // preparing statement
+            PreparedStatement pstm = db.prepareStatement(sql, TYPE_SCROLL_INSENSITIVE, NO_GENERATED_KEYS);
+            pstm.setInt(1, properties.getCapacity());
+            pstm.setInt(2, properties.hasProjector() ? 1 : 0);
+            pstm.setInt(3, properties.hasWhiteboard() ? 1 : 0);
+            pstm.setInt(4, properties.hasInteractiveWhiteboard() ? 1 : 0);
+            pstm.setInt(5, properties.isVideocallCapable() ? 1 : 0);
+            pstm.setInt(6, properties.hasMicrophone() ? 1 : 0);
+
+
+            ResultSet results = pstm.executeQuery();
             while (results.next()) {
                 rooms.add(createRoomFromResultSet(results));
             }
@@ -61,21 +79,27 @@ public class RoomDAO extends DAO<Room>{
 
     public ArrayList<Room> getRoomsByPropertiesAndDepartment(RoomProperties properties, String department) throws RoomServiceException, ReservationServiceException {
         // preparing sql
-        String sql = "SELECT * FROM rooms WHERE " +
-                "department=" + department + " AND " +
-                "capacity >= "  + String.valueOf(properties.getCapacity()) + " AND " +
-                "projector = "  + String.valueOf(properties.hasProjector() ? 1 : 0)  + " AND " +
-                "whiteboard = " + String.valueOf(properties.hasWhiteboard() ? 1 : 0) + " AND " +
-                "int_whiteboard = " + String.valueOf(properties.hasInteractiveWhiteboard() ? 1 : 0) + " AND " +
-                "videocall_capable = " + String.valueOf(properties.isVideocallCapable() ? 1 : 0) + " AND " +
-                "microphone = " + String.valueOf(properties.hasMicrophone() ? 1 : 0);
+        String sql = "SELECT * FROM rooms WHERE capacity >= ? AND projector = ? AND whiteboard = ? AND int_whiteboard = ?" +
+                "AND videocall_capable = ? AND microphone = ? AND department = ?";
 
         // retrieving results filtered by room properties
         try {
             ArrayList<Room> rooms = new ArrayList<>();
 
-            // retrieving rooms
-            ResultSet results = retrieve(sql);
+            // retrieving database connection
+            Connection db = getConnection();
+
+            // preparing statement
+            PreparedStatement pstm = db.prepareStatement(sql, TYPE_SCROLL_INSENSITIVE, NO_GENERATED_KEYS);
+            pstm.setInt(1, properties.getCapacity());
+            pstm.setInt(2, properties.hasProjector() ? 1 : 0);
+            pstm.setInt(3, properties.hasWhiteboard() ? 1 : 0);
+            pstm.setInt(4, properties.hasInteractiveWhiteboard() ? 1 : 0);
+            pstm.setInt(5, properties.isVideocallCapable() ? 1 : 0);
+            pstm.setInt(6, properties.hasMicrophone() ? 1 : 0);
+            pstm.setString(7, department);
+
+            ResultSet results = pstm.executeQuery();
             while (results.next()) {
                 Room room = createRoomFromResultSet(results);
                 // adding reservations

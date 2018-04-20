@@ -19,17 +19,6 @@ public abstract class DAO<T> {
         return db;
     }
 
-    public ResultSet retrieve(String query) throws ClassNotFoundException, SQLException {
-        Connection db = getConnection();
-        Statement stmt = db.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-        ResultSet res = stmt.executeQuery(query);
-
-        stmt.close();
-        db.close();
-
-        return res;
-    }
-
     public abstract void update(T o) throws Exception;
     public abstract void delete(T o) throws Exception;
 

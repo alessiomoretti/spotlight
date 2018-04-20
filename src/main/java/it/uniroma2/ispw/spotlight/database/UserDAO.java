@@ -8,6 +8,8 @@ import it.uniroma2.ispw.spotlight.users.AdministrativeStaffMember;
 import it.uniroma2.ispw.spotlight.users.User;
 
 import static it.uniroma2.ispw.spotlight.Constants.*;
+import static java.sql.ResultSet.TYPE_SCROLL_INSENSITIVE;
+import static java.sql.Statement.NO_GENERATED_KEYS;
 
 import java.sql.*;
 
@@ -15,11 +17,13 @@ public class UserDAO extends DAO<User> {
 
     public User getUserByUsername(String username) throws UserRetrievalException {
         // preparing query to retrieve the user with the given username
-        String sql = "SELECT 1 FROM users WHERE username=" + username;
+        String sql = "SELECT * FROM users WHERE username=?";
 
         // retrieving results
         try {
-            ResultSet results = retrieve(sql);
+            PreparedStatement pstm = getConnection().prepareStatement(sql, TYPE_SCROLL_INSENSITIVE, NO_GENERATED_KEYS);
+            pstm.setString(1, username);
+            ResultSet results = pstm.executeQuery();
             return createUserFromResultSet(results);
         } catch (ClassNotFoundException | SQLException se) {
             se.printStackTrace();
@@ -29,11 +33,15 @@ public class UserDAO extends DAO<User> {
 
     public User authenticateUser(String username, String hashed_pwd) throws AuthServiceException {
         // preparing query to authenticate user
-        String sql = "SELECT 1 FROM users WHERE username=" + username + " AND password=" + hashed_pwd;
+        String sql = "SELECT * FROM users WHERE username=? AND password=?";
 
         // retrieving results
         try {
-            ResultSet results = retrieve(sql);
+            PreparedStatement pstm = getConnection().prepareStatement(sql, TYPE_SCROLL_INSENSITIVE, NO_GENERATED_KEYS);
+            pstm.setString(1, username);
+            pstm.setString(2, hashed_pwd);
+            System.out.println(pstm.toString());
+            ResultSet results = pstm.executeQuery();
             return createUserFromResultSet(results);
         } catch (ClassNotFoundException | SQLException se) {
             se.printStackTrace();

@@ -8,6 +8,8 @@ import it.uniroma2.ispw.spotlight.exceptions.UserRetrievalException;
 import java.sql.*;
 import java.util.ArrayList;
 
+import static java.sql.ResultSet.TYPE_SCROLL_INSENSITIVE;
+
 
 public class EventDAO extends DAO<Event> {
 
@@ -19,11 +21,18 @@ public class EventDAO extends DAO<Event> {
 
     public Event getEventById(String eventID) throws UserRetrievalException, EventServiceException {
         // preparing query to select the event for a given id
-        String sql = "SELECT * FROM events WHERE eventID=" + eventID;
+        String sql = "SELECT * FROM events WHERE eventID=?";
 
         // retrieving results
         try {
-            ResultSet results = retrieve(sql);
+            // retrieving database connection
+            Connection db = getConnection();
+
+            // preparing statement
+            PreparedStatement pstm = db.prepareStatement(sql, TYPE_SCROLL_INSENSITIVE, NO_GENERATED_KEYS);
+            pstm.setString(1, eventID);
+
+            ResultSet results = pstm.executeQuery();
             if (results.first()) {
                 return getEventsFromResultSet(results).get(0); // get the first element (only one result)
             } else {
@@ -36,11 +45,18 @@ public class EventDAO extends DAO<Event> {
 
     public ArrayList<Event> getEventsByReferral(User referral) throws EventServiceException {
         // preparing query to select the event for a given referral
-        String sql = "SELECT * FROM events WHERE referral=" + referral.getUsername();
+        String sql = "SELECT * FROM events WHERE referral=?";
 
         // retrieving results
         try {
-            ResultSet results = retrieve(sql);
+            // retrieving database connection
+            Connection db = getConnection();
+
+            // preparing statement
+            PreparedStatement pstm = db.prepareStatement(sql, TYPE_SCROLL_INSENSITIVE, NO_GENERATED_KEYS);
+            pstm.setString(1, referral.getUsername());
+
+            ResultSet results = pstm.executeQuery();
             if (results.first()) {
                 return getEventsFromResultSet(results, referral); // get the first element (only one result)
             } else {
@@ -53,13 +69,22 @@ public class EventDAO extends DAO<Event> {
 
     public ArrayList<Event> getEventsByName(String eventName) throws UserRetrievalException, EventServiceException {
         // preparing query to get all the events containing the name
-        String sql = "SELECT * FROM events WHERE event_name LIKE " + eventName + "" +
-                     "OR event_name LIKE " + eventName + "% " +
-                     "OR event_name LIKE _" + eventName + "_";
+        String sql = "SELECT * FROM events WHERE event_name LIKE ? " +
+                     "OR event_name LIKE ?% " +
+                     "OR event_name LIKE _?_";
 
         // retrieving results
         try {
-            ResultSet results = retrieve(sql);
+            // retrieving database connection
+            Connection db = getConnection();
+
+            // preparing statement
+            PreparedStatement pstm = db.prepareStatement(sql, TYPE_SCROLL_INSENSITIVE, NO_GENERATED_KEYS);
+            pstm.setString(1, eventName);
+            pstm.setString(2, eventName);
+            pstm.setString(3, eventName);
+
+            ResultSet results = pstm.executeQuery();
             if (results.first()) {
                 return getEventsFromResultSet(results);
             } else {
@@ -72,11 +97,19 @@ public class EventDAO extends DAO<Event> {
 
     public ArrayList<Event> getEventsByTime(Timestamp startT, Timestamp endT) throws UserRetrievalException, EventServiceException {
         // preparing query to retrieve events in the given timeslot
-        String sql = "SELECT * FROM events WHERE (start_time, end_time) overlaps (" + startT.toString() + "," + endT.toString() + ")";
+        String sql = "SELECT * FROM events WHERE (start_time, end_time) overlaps (?,?)";
 
         // retrieving results
         try {
-            ResultSet results = retrieve(sql);
+            // retrieving database connection
+            Connection db = getConnection();
+
+            // preparing statement
+            PreparedStatement pstm = db.prepareStatement(sql, TYPE_SCROLL_INSENSITIVE, NO_GENERATED_KEYS);
+
+            pstm.setTimestamp(1, startT);
+            pstm.setTimestamp(2, endT);
+            ResultSet results = pstm.executeQuery();
             if (results.first()) {
                 return getEventsFromResultSet(results);
             } else {

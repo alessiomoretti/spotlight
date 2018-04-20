@@ -6,18 +6,26 @@ import it.uniroma2.ispw.spotlight.exceptions.ReservationServiceException;
 import java.sql.*;
 import java.util.ArrayList;
 
+import static java.sql.ResultSet.TYPE_SCROLL_INSENSITIVE;
+
 public class ReservationDAO extends DAO<Reservation> {
 
     public ReservationDAO() { }
 
     public ArrayList<Reservation> getReservationsByEventID(String eventID) throws ReservationServiceException {
         // preparing query to retrieve all the reservations (present or future) related to a given event
-        String sql = "SELECT * FROM rooms WHERE eventID=" + eventID +
-                "AND start_time >= current_timestamp";
+        String sql = "SELECT * FROM rooms WHERE eventID=? AND start_time  >= current_timestamp";
 
         // retrieving reservations
         try {
-            ResultSet results = retrieve(sql);
+            // retrieving database connection
+            Connection db = getConnection();
+
+            // preparing statement
+            PreparedStatement pstm = db.prepareStatement(sql, TYPE_SCROLL_INSENSITIVE, NO_GENERATED_KEYS);
+            pstm.setString(1, eventID);
+
+            ResultSet results = pstm.executeQuery();
             return getReservationsFromResultSet(results);
         } catch (ClassNotFoundException | SQLException se) {
             se.printStackTrace();
@@ -27,12 +35,18 @@ public class ReservationDAO extends DAO<Reservation> {
 
     public ArrayList<Reservation> getReservationsByRoomID(String roomID) throws ReservationServiceException {
         // preparing query to retrieve all the reservations (present or future) related to a given event
-        String sql = "SELECT * FROM rooms WHERE roomID=" + roomID +
-                "AND start_time >= current_timestamp";
+        String sql = "SELECT * FROM rooms WHERE roomID=? AND start_time >= current_timestamp";
 
         // retrieving reservations
         try {
-            ResultSet results = retrieve(sql);
+            // retrieving database connection
+            Connection db = getConnection();
+
+            // preparing statement
+            PreparedStatement pstm = db.prepareStatement(sql, TYPE_SCROLL_INSENSITIVE, NO_GENERATED_KEYS);
+            pstm.setString(1, roomID);
+
+            ResultSet results = pstm.executeQuery();
             return getReservationsFromResultSet(results);
         } catch (ClassNotFoundException | SQLException se) {
             se.printStackTrace();
@@ -42,13 +56,24 @@ public class ReservationDAO extends DAO<Reservation> {
 
     public boolean checkReservationsByRoomIDAndTimeslot(String roomID, Timestamp startT, Timestamp endT) throws ReservationServiceException {
         // preparing query to retrieve all the reservations in the given timeslot
-        String sql = "SELECT * FROM rooms WHERE roomID=" + roomID +
-                "AND (start_time >= " + startT.toString() + " AND end_time <= " + endT.toString() + ") " +
-                "OR (start_time <= " + startT.toString() + " AND end_time >= " + endT.toString() + ")";
+        String sql = "SELECT * FROM rooms WHERE roomID=?"+
+                "AND (start_time >= ?) AND (end_time <= ?) " +
+                "OR (start_time <= ?) AND (end_time >= ?)";
 
         // retrieving reservations
         try {
-            ResultSet results = retrieve(sql);
+            // retrieving database connection
+            Connection db = getConnection();
+
+            // preparing statement
+            PreparedStatement pstm = db.prepareStatement(sql, TYPE_SCROLL_INSENSITIVE, NO_GENERATED_KEYS);
+            pstm.setString(1, roomID);
+            pstm.setTimestamp(2, startT);
+            pstm.setTimestamp(3, endT);
+            pstm.setTimestamp(2, startT);
+            pstm.setTimestamp(1, endT);
+
+            ResultSet results = pstm.executeQuery();
             return (getReservationsFromResultSet(results).size() == 0);
         } catch (ClassNotFoundException | SQLException se) {
             se.printStackTrace();
@@ -58,12 +83,18 @@ public class ReservationDAO extends DAO<Reservation> {
 
     public ArrayList<Reservation> getReservationsByReferral(String referral) throws ReservationServiceException {
         // preparing query to retrieve all the reservations (present or future) related to a given referral
-        String sql = "SELECT * FROM rooms WHERE eventID=" + referral +
-                "AND start_time >= current_timestamp";
+        String sql = "SELECT * FROM rooms WHERE referral=? AND start_time >= current_timestamp";
 
         // retrieving reservations
         try {
-            ResultSet results = retrieve(sql);
+            // retrieving database connection
+            Connection db = getConnection();
+
+            // preparing statement
+            PreparedStatement pstm = db.prepareStatement(sql, TYPE_SCROLL_INSENSITIVE, NO_GENERATED_KEYS);
+            pstm.setString(1, referral);
+
+            ResultSet results = pstm.executeQuery();
             return getReservationsFromResultSet(results);
         } catch (ClassNotFoundException | SQLException se) {
             se.printStackTrace();
