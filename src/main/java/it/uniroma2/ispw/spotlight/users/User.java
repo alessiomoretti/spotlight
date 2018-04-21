@@ -10,8 +10,6 @@ public abstract class User {
     private String lastName;
     private String emailAddress;
 
-    private Integer role = GENERIC_ROLE;
-
 
     public User() { }
 
@@ -21,6 +19,8 @@ public abstract class User {
         this.lastName     = lastName;
         this.emailAddress = emailAddress;
     }
+
+    public abstract Integer getRole();
 
     public String getName() {
         return this.getLastName() + " " + this.getFirstName();
@@ -58,7 +58,4 @@ public abstract class User {
         this.emailAddress = emailAddress;
     }
 
-    public Integer getRole() {
-        return role;
-    }
 }

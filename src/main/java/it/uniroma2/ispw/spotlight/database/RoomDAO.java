@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import static java.sql.ResultSet.TYPE_SCROLL_INSENSITIVE;
+import static java.sql.Statement.NO_GENERATED_KEYS;
 
 public class RoomDAO extends DAO<Room>{
 

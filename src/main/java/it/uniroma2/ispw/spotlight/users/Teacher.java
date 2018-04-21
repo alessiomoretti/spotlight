@@ -5,7 +5,6 @@ import it.uniroma2.ispw.spotlight.Constants;
 public class Teacher extends User {
 
     private String department;
-    private Integer role = Constants.TEACHER_ROLE;
 
     public Teacher(String username, String firstName, String lastName, String emailAddress, String department) {
         super(username, firstName, lastName, emailAddress);
@@ -13,6 +12,11 @@ public class Teacher extends User {
     }
 
     public Teacher() { }
+
+    @Override
+    public Integer getRole() {
+        return Constants.TEACHER_ROLE;
+    }
 
     @Override
     public String getName() {

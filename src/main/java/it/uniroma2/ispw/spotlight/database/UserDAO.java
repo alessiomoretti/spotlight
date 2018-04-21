@@ -40,7 +40,6 @@ public class UserDAO extends DAO<User> {
             PreparedStatement pstm = getConnection().prepareStatement(sql, TYPE_SCROLL_INSENSITIVE, NO_GENERATED_KEYS);
             pstm.setString(1, username);
             pstm.setString(2, hashed_pwd);
-            System.out.println(pstm.toString());
             ResultSet results = pstm.executeQuery();
             return createUserFromResultSet(results);
         } catch (ClassNotFoundException | SQLException se) {

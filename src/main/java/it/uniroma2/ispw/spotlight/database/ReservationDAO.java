@@ -7,6 +7,7 @@ import java.sql.*;
 import java.util.ArrayList;
 
 import static java.sql.ResultSet.TYPE_SCROLL_INSENSITIVE;
+import static java.sql.Statement.NO_GENERATED_KEYS;
 
 public class ReservationDAO extends DAO<Reservation> {
 
