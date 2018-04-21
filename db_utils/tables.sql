@@ -6,7 +6,7 @@ CREATE TABLE users (
   lastname               VARCHAR NOT NULL,
   email                  VARCHAR NOT NULL,
   department             VARCHAR NOT NULL,
-  role                   VARCHAR NOT NULL
+  role                   INTEGER NOT NULL
 );
 
 CREATE TABLE rooms (
@@ -22,6 +22,15 @@ CREATE TABLE rooms (
   microphone             INTEGER NOT NULL
 );
 
+CREATE TABLE events (
+  eventID                VARCHAR NOT NULL PRIMARY KEY,
+  event_name             VARCHAR NOT NULL,
+  start_timestamp        TIMESTAMP NOT NULL,
+  end_timestamp          TIMESTAMP NOT NULL,
+  referral               VARCHAR NOT NULL REFERENCES users(username),
+  mailing_list           VARCHAR
+);
+
 CREATE TABLE reservations (
   resID                  VARCHAR NOT NULL PRIMARY KEY,
   roomID                 VARCHAR NOT NULL REFERENCES rooms(roomID),
@@ -29,13 +38,4 @@ CREATE TABLE reservations (
   referral               VARCHAR NOT NULL REFERENCES users(username),
   start_timestamp        TIMESTAMP NOT NULL,
   end_timestamp          TIMESTAMP NOT NULL
-);
-
-CREATE TABLE events (
-  eventID                VARCHAR NOT NULL PRIMARY KEY,
-  event_name             VARCHAR NOT NULL,
-  start_timestamp        TIMESTAMP NOT NULL,
-  end_timestamp          TIMESTAMP NOT NULL,
-  referral               VARCHAR NOT NULL REFERENCES users(username),
-  mailing_list           VARCHAR,
 );
