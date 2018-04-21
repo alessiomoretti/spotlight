@@ -71,8 +71,8 @@ public class EventDAO extends DAO<Event> {
     public ArrayList<Event> getEventsByName(String eventName) throws UserRetrievalException, EventServiceException {
         // preparing query to get all the events containing the name
         String sql = "SELECT * FROM events WHERE event_name LIKE ? " +
-                     "OR event_name LIKE ?% " +
-                     "OR event_name LIKE _?_";
+                     "OR event_name LIKE ?" +
+                     "OR event_name LIKE ?";
 
         // retrieving results
         try {
@@ -82,8 +82,8 @@ public class EventDAO extends DAO<Event> {
             // preparing statement
             PreparedStatement pstm = db.prepareStatement(sql, TYPE_SCROLL_INSENSITIVE, NO_GENERATED_KEYS);
             pstm.setString(1, eventName);
-            pstm.setString(2, eventName);
-            pstm.setString(3, eventName);
+            pstm.setString(2, eventName + "%");
+            pstm.setString(3, "_" + eventName + "_");
 
             ResultSet results = pstm.executeQuery();
             if (results.first()) {
@@ -98,7 +98,7 @@ public class EventDAO extends DAO<Event> {
 
     public ArrayList<Event> getEventsByTime(Timestamp startT, Timestamp endT) throws UserRetrievalException, EventServiceException {
         // preparing query to retrieve events in the given timeslot
-        String sql = "SELECT * FROM events WHERE (start_time, end_time) overlaps (?,?)";
+        String sql = "SELECT * FROM events WHERE (start_timestamp, end_timestamp) overlaps (?,?)";
 
         // retrieving results
         try {
@@ -187,8 +187,8 @@ public class EventDAO extends DAO<Event> {
 
             events.add(new Event(results.getString("eventID"),
                     results.getString("event_name"),
-                    new Date(results.getTimestamp("start_time").getTime()),
-                    new Date(results.getTimestamp("end_time").getTime()),
+                    new Date(results.getTimestamp("start_timestamp").getTime()),
+                    new Date(results.getTimestamp("end_timestamp").getTime()),
                     referralUser,
                     results.getString("mailing_list")));
         }
@@ -197,13 +197,18 @@ public class EventDAO extends DAO<Event> {
 
     public ArrayList<Event> getEventsFromResultSet(ResultSet results, User referral) throws SQLException {
         ArrayList<Event> events = new ArrayList<>();
-        while (results.next()) {
+
+        if (!results.isBeforeFirst()) return events;
+        results.first();
+        while (true) {
             events.add(new Event(results.getString("eventID"),
                     results.getString("event_name"),
-                    new Date(results.getTimestamp("start_time").getTime()),
-                    new Date(results.getTimestamp("end_time").getTime()),
+                    new Date(results.getTimestamp("start_timestamp").getTime()),
+                    new Date(results.getTimestamp("end_timestamp").getTime()),
                     referral,
                     results.getString("mailing_list")));
+
+            if (!results.next()) break;
         }
         return events;
     }

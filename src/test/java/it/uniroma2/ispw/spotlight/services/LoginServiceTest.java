@@ -21,15 +21,15 @@ class LoginServiceTest {
 
 
     @Test
-    public void myTest() throws AuthServiceException, AuthRequiredException {
+    public void authTest() throws AuthServiceException, AuthRequiredException {
         this.loginService = new LoginService();
         if (this.loginService.authenticateUser(testUsername, testPassword)) {
-            System.out.println("User Authenticated!");
             Teacher teacher = (Teacher) this.loginService.getCurrentUser();
             Assertions.assertNotNull(teacher);
             Assertions.assertEquals(this.name, teacher.getName());
             Assertions.assertEquals(this.role, teacher.getRole());
             Assertions.assertEquals(this.department, teacher.getDepartment());
+            System.out.println("User Authenticated!");
         }
     }
 

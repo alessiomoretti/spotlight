@@ -24,7 +24,7 @@ public class RoomDAO extends DAO<Room>{
         this.reservationDAO = new ReservationDAO();
     }
 
-    public Room getRoomByID(String roomID) throws RoomServiceException, ReservationServiceException {
+    public Room getRoomByID(String roomID) throws RoomServiceException {
         // preparing query to retrieve the room
         String sql = "SELECT * FROM rooms WHERE roomID=?";
 
@@ -45,7 +45,7 @@ public class RoomDAO extends DAO<Room>{
         }
     }
 
-    public ArrayList<Room> getRoomsByProperties(RoomProperties properties) throws RoomServiceException {
+    public ArrayList<Room> getRoomsByProperties(RoomProperties properties) throws RoomServiceException, ReservationServiceException {
         // preparing sql
         String sql = "SELECT * FROM rooms WHERE capacity >= ? AND projector = ? AND whiteboard = ? AND int_whiteboard = ?" +
                      "AND videocall_capable = ? AND microphone = ?";
@@ -68,12 +68,22 @@ public class RoomDAO extends DAO<Room>{
 
 
             ResultSet results = pstm.executeQuery();
-            while (results.next()) {
-                rooms.add(createRoomFromResultSet(results));
+            if (!results.isBeforeFirst()) return rooms;
+
+            results.first();
+            while (true) {
+                Room room = createRoomFromResultSet(results);
+                // adding reservations
+                for (Reservation reservation : reservationDAO.getReservationsByRoomID(room.getRoomID()))
+                    room.addReservation(reservation);
+                rooms.add(room);
+
+                if (!results.next()) break;
             }
 
             return rooms;
         } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
             throw new RoomServiceException("Exception caught handling rooms retrieval");
         }
     }
@@ -101,11 +111,17 @@ public class RoomDAO extends DAO<Room>{
             pstm.setString(7, department);
 
             ResultSet results = pstm.executeQuery();
-            while (results.next()) {
+            if (!results.isBeforeFirst()) return rooms;
+
+            results.first();
+            while (true) {
                 Room room = createRoomFromResultSet(results);
                 // adding reservations
                 for (Reservation reservation : reservationDAO.getReservationsByRoomID(room.getRoomID()))
                     room.addReservation(reservation);
+                rooms.add(room);
+
+                if (!results.next()) break;
             }
 
             return rooms;
@@ -177,9 +193,6 @@ public class RoomDAO extends DAO<Room>{
     public void delete(Room room) throws Exception { /* no implementation needed */}
 
     public Room createRoomFromResultSet(ResultSet results) throws SQLException {
-        // check if result set is not empty
-        if (!results.first())
-            return null;
 
         // creating room properties
         RoomProperties roomProperties = new RoomProperties(results.getInt("capacity"),

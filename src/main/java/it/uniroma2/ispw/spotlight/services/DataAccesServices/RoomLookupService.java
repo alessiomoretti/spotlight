@@ -19,10 +19,19 @@ public class RoomLookupService extends DataAccessService<Room> {
         setDatabaseInterface(new RoomDAO());
     }
 
-    public ArrayList<Room> findRoomByProperties(RoomProperties properties) throws AuthRequiredException, RoomServiceException {
+    public ArrayList<Room> findRoomByProperties(RoomProperties properties) throws AuthRequiredException, RoomServiceException, ReservationServiceException {
         if (hasCapability(getCurrentUser())) {
             RoomDAO roomDAO = (RoomDAO) getDatabaseInterface();
             return roomDAO.getRoomsByProperties(properties);
+        } else {
+            throw new AuthRequiredException("This user has no privileges to access this service");
+        }
+    }
+
+    public ArrayList<Room> findRoomByProperties(RoomProperties properties, String department) throws AuthRequiredException, RoomServiceException, ReservationServiceException {
+        if (hasCapability(getCurrentUser())) {
+            RoomDAO roomDAO = (RoomDAO) getDatabaseInterface();
+            return roomDAO.getRoomsByPropertiesAndDepartment(properties, department);
         } else {
             throw new AuthRequiredException("This user has no privileges to access this service");
         }

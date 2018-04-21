@@ -19,10 +19,13 @@ public class RoomManagementService extends DataAccessService<Room> {
 
     private Integer minRoleRequired = Constants.TEACHER_ROLE;
     private ReservationDAO reservationDAO;
+    private RoomLookupService roomLookup;
 
     public RoomManagementService() {
         // setting correct DAO to access rooms database
         setDatabaseInterface(new RoomDAO());
+        // setting lookup service
+        this.roomLookup = new RoomLookupService();
         // setting DAO to access reservations
         this.reservationDAO = new ReservationDAO();
     }
@@ -31,8 +34,8 @@ public class RoomManagementService extends DataAccessService<Room> {
         if (!hasCapability(getCurrentUser()))
             throw new AuthRequiredException("This user has no privileges to access this service");
 
-        // retrieving all rooms with the desired properties and department
-        ArrayList<Room> allRooms = ((RoomDAO) getDatabaseInterface()).getRoomsByPropertiesAndDepartment(properties, department);
+        // retrieving all rooms with the desired properties
+        ArrayList<Room> allRooms = roomLookup.findRoomByProperties(properties, department);
 
         // check if a room is available in the desired timespan
         for (Room room : allRooms) {
@@ -45,7 +48,8 @@ public class RoomManagementService extends DataAccessService<Room> {
 
                 // create new reservation
                 Reservation newReservation = new Reservation(reservationID, room.getRoomID(), eventID, getCurrentUser().getUsername(), startDateTime, endDateTime);
-
+                // add reservation to room
+                room.addReservation(newReservation);
                 // update room and return success
                 ((RoomDAO) getDatabaseInterface()).update(room);
                 return true;

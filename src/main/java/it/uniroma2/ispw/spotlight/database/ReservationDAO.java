@@ -15,7 +15,7 @@ public class ReservationDAO extends DAO<Reservation> {
 
     public ArrayList<Reservation> getReservationsByEventID(String eventID) throws ReservationServiceException {
         // preparing query to retrieve all the reservations (present or future) related to a given event
-        String sql = "SELECT * FROM rooms WHERE eventID=? AND start_time  >= current_timestamp";
+        String sql = "SELECT * FROM reservations WHERE eventID=? AND start_timestamp  >= current_timestamp";
 
         // retrieving reservations
         try {
@@ -36,7 +36,7 @@ public class ReservationDAO extends DAO<Reservation> {
 
     public ArrayList<Reservation> getReservationsByRoomID(String roomID) throws ReservationServiceException {
         // preparing query to retrieve all the reservations (present or future) related to a given event
-        String sql = "SELECT * FROM rooms WHERE roomID=? AND start_time >= current_timestamp";
+        String sql = "SELECT * FROM reservations WHERE roomID=? AND start_timestamp >= current_timestamp";
 
         // retrieving reservations
         try {
@@ -57,9 +57,9 @@ public class ReservationDAO extends DAO<Reservation> {
 
     public boolean checkReservationsByRoomIDAndTimeslot(String roomID, Timestamp startT, Timestamp endT) throws ReservationServiceException {
         // preparing query to retrieve all the reservations in the given timeslot
-        String sql = "SELECT * FROM rooms WHERE roomID=?"+
-                "AND (start_time >= ?) AND (end_time <= ?) " +
-                "OR (start_time <= ?) AND (end_time >= ?)";
+        String sql = "SELECT * FROM reservations WHERE roomID=?"+
+                "AND (start_timestamp >= ?) AND (end_timestamp <= ?) " +
+                "OR (start_timestamp <= ?) AND (end_timestamp >= ?)";
 
         // retrieving reservations
         try {
@@ -84,7 +84,7 @@ public class ReservationDAO extends DAO<Reservation> {
 
     public ArrayList<Reservation> getReservationsByReferral(String referral) throws ReservationServiceException {
         // preparing query to retrieve all the reservations (present or future) related to a given referral
-        String sql = "SELECT * FROM rooms WHERE referral=? AND start_time >= current_timestamp";
+        String sql = "SELECT * FROM reservations WHERE referral=? AND start_timestamp >= current_timestamp";
 
         // retrieving reservations
         try {
@@ -159,13 +159,18 @@ public class ReservationDAO extends DAO<Reservation> {
 
     public ArrayList<Reservation> getReservationsFromResultSet(ResultSet results) throws SQLException {
         ArrayList<Reservation> reservations = new ArrayList<>();
-        while (results.next()) {
+
+        if (!results.isBeforeFirst()) return reservations;
+        results.first();
+        while (true) {
             reservations.add(new Reservation(results.getString("id"),
                     results.getString("roomID"),
                     results.getString("eventID"),
                     results.getString("referral"),
                     new Date(results.getTimestamp("start_time").getTime()),
                     new Date(results.getTimestamp("end_time").getTime())));
+
+            if (!results.next()) break;
         }
         return reservations;
     }
