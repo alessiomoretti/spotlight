@@ -71,8 +71,8 @@ public class ReservationDAO extends DAO<Reservation> {
             pstm.setString(1, roomID);
             pstm.setTimestamp(2, startT);
             pstm.setTimestamp(3, endT);
-            pstm.setTimestamp(2, startT);
-            pstm.setTimestamp(1, endT);
+            pstm.setTimestamp(4, startT);
+            pstm.setTimestamp(5, endT);
 
             ResultSet results = pstm.executeQuery();
             return (getReservationsFromResultSet(results).size() == 0);
@@ -108,7 +108,8 @@ public class ReservationDAO extends DAO<Reservation> {
         // preparing update query
         String sql = "INSERT INTO reservations (resID, roomID, eventID, referral, start_timestamp, end_timestamp) VALUES (?, ?, ?, ?, ?, ?) " +
                 "ON CONFLICT (resID) DO UPDATE " +
-                "SET start_timestamp = EXCLUDED.start_timestamp, end_timestamp = EXCLUDED.end_timestamp";
+                "SET referral = EXCLUDED.referral, " +
+                "start_timestamp = EXCLUDED.start_timestamp, end_timestamp = EXCLUDED.end_timestamp";
 
         try {
             // retrieving database connection
@@ -124,10 +125,8 @@ public class ReservationDAO extends DAO<Reservation> {
             pstmt.setTimestamp(5, new Timestamp(reservation.getStartDateTime().getTime()));
             pstmt.setTimestamp(6, new Timestamp(reservation.getEndDateTime().getTime()));
             pstmt.execute();
-            pstmt.close();
 
             db.commit();
-            db.close();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
             throw new ReservationServiceException("Exception caught updating / creating a new reservation");
@@ -142,15 +141,15 @@ public class ReservationDAO extends DAO<Reservation> {
             Connection db = getConnection();
 
             // preparing the delete sql
-            String sql = "DELETE FROM reservation WHERE id=" + reservation.getReservationID();
+            String sql = "DELETE FROM reservations WHERE resID=?";
 
             // preparing statement
             PreparedStatement pstmt = getConnection().prepareStatement(sql);
+            pstmt.setString(1, reservation.getReservationID());
             pstmt.execute();
             pstmt.close();
 
             db.commit();
-            db.close();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
             throw new ReservationServiceException("Exception deleting a reservation");
@@ -163,12 +162,13 @@ public class ReservationDAO extends DAO<Reservation> {
         if (!results.isBeforeFirst()) return reservations;
         results.first();
         while (true) {
-            reservations.add(new Reservation(results.getString("id"),
+            reservations.add(new Reservation(
+                    results.getString("resID"),
                     results.getString("roomID"),
                     results.getString("eventID"),
                     results.getString("referral"),
-                    new Date(results.getTimestamp("start_time").getTime()),
-                    new Date(results.getTimestamp("end_time").getTime())));
+                    new Date(results.getTimestamp("start_timestamp").getTime()),
+                    new Date(results.getTimestamp("end_timestamp").getTime())));
 
             if (!results.next()) break;
         }

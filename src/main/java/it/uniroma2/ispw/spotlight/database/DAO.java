@@ -14,8 +14,10 @@ public abstract class DAO<T> {
 
         // dynamic loading of the db driver
         Class.forName(DB_DRIVER_CLASS_NAME);
-        if (this.db == null)
+        if (this.db == null) {
             this.db = DriverManager.getConnection(DB_HOST, DB_USER, DB_PWD);
+            this.db.setAutoCommit(false);
+        }
         return db;
     }
 

@@ -21,6 +21,8 @@ public class RoomManagementService extends DataAccessService<Room> {
     private ReservationDAO reservationDAO;
     private RoomLookupService roomLookup;
 
+    private boolean adminPrivileges = false;
+
     public RoomManagementService() {
         // setting correct DAO to access rooms database
         setDatabaseInterface(new RoomDAO());
@@ -30,12 +32,12 @@ public class RoomManagementService extends DataAccessService<Room> {
         this.reservationDAO = new ReservationDAO();
     }
 
-    public boolean reserveRoom (String eventID, RoomProperties properties, String department, Date startDateTime, Date endDateTime) throws AuthRequiredException, ReservationServiceException, RoomServiceException {
+    public Reservation reserveRoom (String eventID, RoomProperties properties, String department, Date startDateTime, Date endDateTime) throws AuthRequiredException, ReservationServiceException, RoomServiceException {
         if (!hasCapability(getCurrentUser()))
             throw new AuthRequiredException("This user has no privileges to access this service");
 
         // retrieving all rooms with the desired properties
-        ArrayList<Room> allRooms = roomLookup.findRoomByProperties(properties, department);
+        ArrayList<Room> allRooms = getRoomLookup().findRoomByProperties(properties, department);
 
         // check if a room is available in the desired timespan
         for (Room room : allRooms) {
@@ -52,22 +54,24 @@ public class RoomManagementService extends DataAccessService<Room> {
                 room.addReservation(newReservation);
                 // update room and return success
                 ((RoomDAO) getDatabaseInterface()).update(room);
-                return true;
+                return newReservation;
             }
         }
 
         // check if user can be pre-emptive (ADMINISTRATIVE)
-        if (getCurrentUser().getRole() >= Constants.ADMINISTRATIVE_ROLE) {
+        if (getCurrentUser().getRole() >= Constants.ADMINISTRATIVE_ROLE && adminPrivileges) {
             Room room = allRooms.get(0);
             // check for conflicting timeslots
             ArrayList<Reservation> conflicts = new ArrayList<>();
             for (Reservation reservation : room.getReservations()) {
-                if (reservation.getEndDateTime().after(endDateTime))
+                if ((reservation.getStartDateTime().getTime() <= endDateTime.getTime()) &&
+                    (startDateTime.getTime() <= reservation.getEndDateTime().getTime()))
                     conflicts.add(reservation);
             }
             // removing conflicting timeslots
             for (Reservation conflict : conflicts) {
                 room.delReservation(conflict);
+                reservationDAO.delete(conflict);
             }
             // TODO Emailer
 
@@ -76,14 +80,19 @@ public class RoomManagementService extends DataAccessService<Room> {
 
             // create new reservation
             Reservation newReservation = new Reservation(reservationID, room.getRoomID(), eventID, getCurrentUser().getUsername(), startDateTime, endDateTime);
-
+            // add reservation to room
+            room.addReservation(newReservation);
             // update room and return success
             ((RoomDAO) getDatabaseInterface()).update(room);
-            return true;
+            return newReservation;
         } else {
-            return false;
+            return null;
         }
     }
 
-    public ReservationDAO getReservationDAO() { return this.getReservationDAO(); }
+    public void setAdminPrivileges(boolean privileges) { this.adminPrivileges = privileges; }
+
+    public ReservationDAO getReservationDAO() { return this.reservationDAO; }
+
+    public RoomLookupService getRoomLookup() { return this.roomLookup; }
 }

@@ -19,7 +19,7 @@ public class EventLookupService extends DataAccessService<Event> {
         setDatabaseInterface(new EventDAO());
     }
 
-    public ArrayList<Event> getEventsByNameAndTime(String eventName, Date start, Date end) throws AuthRequiredException, UserRetrievalException, EventServiceException {
+    public ArrayList<Event> getEventsByNameAndStartDate(String eventName, Date start) throws AuthRequiredException, UserRetrievalException, EventServiceException {
         if (hasCapability(getCurrentUser())) {
             // retrieving all the events containing the given name
             ArrayList<Event> retrievedEvents = ((EventDAO) getDatabaseInterface()).getEventsByName(eventName);
@@ -28,9 +28,8 @@ public class EventLookupService extends DataAccessService<Event> {
             ArrayList<Event> events = new ArrayList<>();
             // iterating over retrieved events to select the ones present or future
             for (Event event : retrievedEvents) {
-                if ((event.getStartDateTime().before(start) || event.getStartDateTime().equals(start)) || event.getEndDateTime().after(end))
-                     events.add(event);
-
+                if(event.getStartDateTime().getTime() <= start.getTime() || event.getEndDateTime().getTime() >= start.getTime())
+                    events.add(event);
             }
             return events;
         } else {

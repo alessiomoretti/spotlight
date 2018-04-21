@@ -5,7 +5,6 @@ import it.uniroma2.ispw.spotlight.services.DataAccesServices.*;
 
 public class ServiceManager {
 
-    // initializing singletons to let services interact
     // a new instance of the ServiceManager will be used for each access to the application
     private LoginService loginService;
     private EventLookupService eventLookupService;
@@ -13,6 +12,8 @@ public class ServiceManager {
     private EventManagementService eventManagementService;
     private RoomLookupService roomLookupService;
     private RoomManagementService roomManagementService;
+
+    private ServiceManager serviceManager = new ServiceManager();
 
     public LoginService getLoginService() {
         if (this.loginService == null)
@@ -60,6 +61,10 @@ public class ServiceManager {
             roomManagementService.setCurrentUser(getLoginService().getCurrentUser());
         }
         return roomManagementService;
+    }
+
+    public ServiceManager getInstance() {
+        return this.serviceManager;
     }
 
 }
