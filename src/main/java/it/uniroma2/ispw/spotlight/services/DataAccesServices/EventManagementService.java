@@ -11,6 +11,7 @@ import it.uniroma2.ispw.spotlight.exceptions.UserRetrievalException;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class EventManagementService extends DataAccessService<Event> {
 
@@ -25,12 +26,35 @@ public class EventManagementService extends DataAccessService<Event> {
         setDatabaseInterface(new EventDAO());
     }
 
-    public void createNewEvent(String eventName) throws AuthRequiredException {
+    public Event createNewEvent(String eventName, Date startT, Date endT) throws EventServiceException, AuthRequiredException {
         if (hasCapability(getCurrentUser())) {
             // generating eventID
             String newEventID = eventName + "-" + getCurrentUser().getUsername() + "-" + String.valueOf(Instant.now().getEpochSecond());
             // generating new event
+            Event event = new Event(newEventID, eventName, startT, endT, getCurrentUser(), getCurrentUser().getEmailAddress());
             setCurrentEvent(new Event(newEventID, eventName, getCurrentUser()));
+
+            // inserting event into DB
+            ((EventDAO) getDatabaseInterface()).update(event);
+            return event;
+        } else {
+            throw new AuthRequiredException("This user has no privileges to access this service");
+        }
+    }
+
+    public void updateEvent(Event event) throws AuthRequiredException, EventServiceException {
+        if (hasCapability(getCurrentUser())) {
+            // updating event
+            ((EventDAO) getDatabaseInterface()).update(event);
+        } else {
+            throw new AuthRequiredException("This user has no privileges to access this service");
+        }
+    }
+
+    public void deleteEvent(Event event) throws AuthRequiredException, EventServiceException {
+        if (hasCapability(getCurrentUser())) {
+            // updating event
+            ((EventDAO) getDatabaseInterface()).delete(event);
         } else {
             throw new AuthRequiredException("This user has no privileges to access this service");
         }
@@ -40,7 +64,7 @@ public class EventManagementService extends DataAccessService<Event> {
         return getEventLookupService().getCurrentUserEvents();
     }
 
-    public Event selectEvent(String eventID) throws EventServiceException, UserRetrievalException, AuthRequiredException {
+    public Event selectEventByID(String eventID) throws EventServiceException, UserRetrievalException, AuthRequiredException {
         if (hasCapability(getCurrentUser())) {
             Event event = ((EventDAO) getEventLookupService().getDatabaseInterface()).getEventById(eventID);
             if (event.getReferral().getUsername().equals(getCurrentUser().getUsername()))

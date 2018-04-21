@@ -28,13 +28,12 @@ public class EventDAO extends DAO<Event> {
         try {
             // retrieving database connection
             Connection db = getConnection();
-
             // preparing statement
             PreparedStatement pstm = db.prepareStatement(sql, TYPE_SCROLL_INSENSITIVE, NO_GENERATED_KEYS);
             pstm.setString(1, eventID);
 
             ResultSet results = pstm.executeQuery();
-            return getEventsFromResultSet(results).get(0); // get the first element (only one result)
+            return getEventsFromResultSet(results).get(0); // get the first element (only one result should be returned)
 
         } catch (ClassNotFoundException | SQLException se) {
             throw new EventServiceException("Exception caught retrieving event " + eventID);
@@ -122,7 +121,7 @@ public class EventDAO extends DAO<Event> {
             // preparing statement
             PreparedStatement pstmt = db.prepareStatement(sql);
             // executing the update routine
-            pstmt.setInt(1, Integer.valueOf(event.getEventID()));
+            pstmt.setString(1, event.getEventID());
             pstmt.setString(2, event.getEventName());
             pstmt.setTimestamp(3, new Timestamp(event.getStartDateTime().getTime()));
             pstmt.setTimestamp(4, new Timestamp(event.getEndDateTime().getTime()));
