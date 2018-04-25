@@ -1,6 +1,6 @@
 package it.uniroma2.ispw.spotlight.services.DataAccesServices;
 
-import it.uniroma2.ispw.spotlight.CalendarHelper;
+import it.uniroma2.ispw.spotlight.helpers.CalendarHelper;
 import it.uniroma2.ispw.spotlight.entities.Room.Reservation;
 import it.uniroma2.ispw.spotlight.entities.Room.RoomProperties;
 import it.uniroma2.ispw.spotlight.exceptions.AuthRequiredException;
@@ -10,12 +10,9 @@ import it.uniroma2.ispw.spotlight.users.AdministrativeStaffMember;
 import it.uniroma2.ispw.spotlight.users.Teacher;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import sun.jvm.hotspot.utilities.Assert;
 
 import java.util.ArrayList;
 import java.util.Date;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class RoomManagementServiceTest {
 

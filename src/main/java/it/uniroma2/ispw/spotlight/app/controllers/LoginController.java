@@ -1,5 +1,7 @@
 package it.uniroma2.ispw.spotlight.app.controllers;
 
+import it.uniroma2.ispw.spotlight.services.LoginService;
+import it.uniroma2.ispw.spotlight.services.ServiceManager;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
@@ -10,6 +12,8 @@ import javafx.stage.Stage;
 import java.awt.event.ActionEvent;
 
 public class LoginController {
+
+    private ServiceManager serviceManager;
 
     @FXML
     private TextField loginUsername;
@@ -23,6 +27,9 @@ public class LoginController {
     public LoginController() {}
 
     public void loginProceedButtonAction(javafx.event.ActionEvent actionEvent) {
+        // retrieving login service
+        LoginService loginService = serviceManager.getInstance().getLoginService();
+
         System.out.println(loginUsername.getText() + " -> " + loginPassword.getText());
         loginErrorText.setVisible(true);
     }

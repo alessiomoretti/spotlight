@@ -1,6 +1,6 @@
 package it.uniroma2.ispw.spotlight.services.DataAccesServices;
 
-import it.uniroma2.ispw.spotlight.CalendarHelper;
+import it.uniroma2.ispw.spotlight.helpers.CalendarHelper;
 import it.uniroma2.ispw.spotlight.entities.Event;
 import it.uniroma2.ispw.spotlight.exceptions.AuthRequiredException;
 import it.uniroma2.ispw.spotlight.exceptions.EventServiceException;
@@ -10,8 +10,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Date;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class EventManagementServiceTest {
 

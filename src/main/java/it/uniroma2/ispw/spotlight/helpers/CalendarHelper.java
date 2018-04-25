@@ -1,4 +1,4 @@
-package it.uniroma2.ispw.spotlight;
+package it.uniroma2.ispw.spotlight.helpers;
 
 import java.util.Calendar;
 import java.util.Date;
