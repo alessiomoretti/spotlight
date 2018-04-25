@@ -42,7 +42,7 @@ public class RoomManagementService extends DataAccessService<Room> {
         // check if a room is available in the desired timespan
         for (Room room : allRooms) {
             // build reservation ID
-            String reservationID = getCurrentUser().getUsername() + "-" + eventID + "-" + (new Timestamp(Instant.now().getEpochSecond())).toString();
+            String reservationID = getCurrentUser().getUsername() + "-" + eventID + "-" + (new Timestamp(System.currentTimeMillis())).toString();
             // if no reservation or a timeslot is available
             if (room.getReservations().size() == 0 || getReservationDAO().checkReservationsByRoomIDAndTimeslot(room.getRoomID(),
                                                                                                                new Timestamp(startDateTime.getTime()),
@@ -58,25 +58,26 @@ public class RoomManagementService extends DataAccessService<Room> {
             }
         }
 
-        // check if user can be pre-emptive (ADMINISTRATIVE)
+        // check if user can be preemptive (ADMINISTRATIVE)
         if (getCurrentUser().getRole() >= Constants.ADMINISTRATIVE_ROLE && adminPrivileges) {
             Room room = allRooms.get(0);
-            // check for conflicting timeslots
+            // check for conflicting time slots
             ArrayList<Reservation> conflicts = new ArrayList<>();
             for (Reservation reservation : room.getReservations()) {
-                if ((reservation.getStartDateTime().getTime() <= endDateTime.getTime()) &&
-                    (startDateTime.getTime() <= reservation.getEndDateTime().getTime()))
+                if (reservation.getStartDateTime().getTime() <= endDateTime.getTime() &&
+                    startDateTime.getTime() <= reservation.getEndDateTime().getTime()) {
                     conflicts.add(reservation);
+                }
             }
-            // removing conflicting timeslots
+            // removing reservations on conflicting time slots
             for (Reservation conflict : conflicts) {
                 room.delReservation(conflict);
-                reservationDAO.delete(conflict);
+                getReservationDAO().delete(conflict);
             }
             // TODO Emailer
 
             // build reservation ID
-            String reservationID = getCurrentUser().getUsername() + "-" + eventID + "-" + (new Timestamp(Instant.now().getEpochSecond())).toString();
+            String reservationID = getCurrentUser().getUsername() + "-" + eventID + "-" + (new Timestamp(System.currentTimeMillis())).toString();
 
             // create new reservation
             Reservation newReservation = new Reservation(reservationID, room.getRoomID(), eventID, getCurrentUser().getUsername(), startDateTime, endDateTime);

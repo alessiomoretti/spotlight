@@ -41,6 +41,10 @@ class RoomManagementServiceTest {
         Assertions.assertEquals(r.getStartDateTime(), start_date);
         Assertions.assertEquals(r.getEndDateTime(), end_date);
 
+        // repeat reservation - must fail
+        Reservation dr = roomManagementService.reserveRoom(testEventID, roomProperties, "History", start_date, end_date);
+        Assertions.assertNull(dr);
+
         // add user - ADMINISTRATIVE
         roomManagementService.setCurrentUser(testUserA);
         roomManagementService.getRoomLookup().setCurrentUser(testUserA);
