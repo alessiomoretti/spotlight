@@ -1,9 +1,10 @@
 package it.uniroma2.ispw.spotlight.app.controllers;
 
+import it.uniroma2.ispw.spotlight.helpers.MD5Helper;
 import it.uniroma2.ispw.spotlight.services.LoginService;
 import it.uniroma2.ispw.spotlight.services.ServiceManager;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
+import javafx.scene.control.Alert;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
@@ -13,7 +14,6 @@ import java.awt.event.ActionEvent;
 
 public class LoginController {
 
-    private ServiceManager serviceManager;
 
     @FXML
     private TextField loginUsername;
@@ -28,9 +28,17 @@ public class LoginController {
 
     public void loginProceedButtonAction(javafx.event.ActionEvent actionEvent) {
         // retrieving login service
-        LoginService loginService = serviceManager.getInstance().getLoginService();
+        LoginService loginService = ServiceManager.getInstance().getLoginService();
 
-        System.out.println(loginUsername.getText() + " -> " + loginPassword.getText());
+        // computing password MD5
+        String hashedPwd = MD5Helper.getHashedString(loginPassword.getText());
+
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("ERROR");
+        alert.setHeaderText("Error on password digest computation");
+        alert.show();
+
+        System.out.println(loginUsername.getText() + " -> " + hashedPwd);
         loginErrorText.setVisible(true);
     }
 
