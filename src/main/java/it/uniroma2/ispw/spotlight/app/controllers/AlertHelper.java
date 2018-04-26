@@ -4,10 +4,11 @@ import javafx.scene.control.Alert;
 
 public class AlertHelper {
 
-    public static void DisplayErrorAlert(String errorMessage) {
+    public static void DisplayErrorAlert(String errorMessage, String errorDetails) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("ERROR");
         alert.setHeaderText(errorMessage);
+        alert.setContentText(errorDetails);
         alert.show();
     }
 }
