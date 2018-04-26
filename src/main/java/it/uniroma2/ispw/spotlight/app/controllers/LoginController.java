@@ -1,16 +1,21 @@
 package it.uniroma2.ispw.spotlight.app.controllers;
 
+import it.uniroma2.ispw.spotlight.exceptions.AuthRequiredException;
+import it.uniroma2.ispw.spotlight.exceptions.AuthServiceException;
 import it.uniroma2.ispw.spotlight.helpers.MD5Helper;
 import it.uniroma2.ispw.spotlight.services.LoginService;
 import it.uniroma2.ispw.spotlight.services.ServiceManager;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.awt.event.ActionEvent;
+import java.io.IOException;
 
 public class LoginController {
 
@@ -30,16 +35,32 @@ public class LoginController {
         // retrieving login service
         LoginService loginService = ServiceManager.getInstance().getLoginService();
 
-        // computing password MD5
-        String hashedPwd = MD5Helper.getHashedString(loginPassword.getText());
+        // retrieving username and password and check if not empty
+        if (loginUsername.getText().length() == 0 || loginPassword.getText().length() == 0) {
+            loginErrorText.setVisible(true);
+        } else {
+            // computing password MD5
+            String hashedPwd = MD5Helper.getHashedString(loginPassword.getText());
 
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("ERROR");
-        alert.setHeaderText("Error on password digest computation");
-        alert.show();
-
-        System.out.println(loginUsername.getText() + " -> " + hashedPwd);
-        loginErrorText.setVisible(true);
+            // authenticating user
+            try {
+                boolean authenticated = loginService.authenticateUser(loginUsername.getText(), hashedPwd);
+                if (!authenticated)
+                    loginErrorText.setVisible(true);
+                else {
+                    // changing scene
+                    Stage stage = (Stage) loginUsername.getScene().getWindow();
+                    Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("spotlight.fxml"));
+                    Scene scene = new Scene(root, 1000, 800);
+                    stage.setScene(scene);
+                }
+            } catch(AuthServiceException e) {
+                e.printStackTrace();
+                AlertHelper.DisplayErrorAlert("Error occured during login!", "An error occured while performing query on the user database");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void loginCancelButtonAction(javafx.event.ActionEvent actionEvent) {
