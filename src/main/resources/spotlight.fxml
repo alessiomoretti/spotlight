@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8">
+  <tabs>
+    <Tab text="Event lookup">
+      <content>
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="500.0" prefWidth="590.0">
+               <children>
+                  <TextField layoutX="14.0" layoutY="14.0" prefHeight="27.0" prefWidth="492.0" />
+                  <Button layoutX="515.0" layoutY="14.0" mnemonicParsing="false" style="-fx-background-color: #6e6d6d;" text="SEARCH" textFill="WHITE" />
+                  <TableView layoutX="14.0" layoutY="53.0" prefHeight="178.0" prefWidth="572.0">
+                    <columns>
+                      <TableColumn maxWidth="228.0" prefWidth="228.0" text="Event" />
+                      <TableColumn maxWidth="172.0" minWidth="0.0" prefWidth="172.0" text="Referral" />
+                        <TableColumn maxWidth="85.0" minWidth="0.0" prefWidth="85.0" text="Start time" />
+                        <TableColumn maxWidth="85.0" prefWidth="85.0" text="End time" />
+                    </columns>
+                  </TableView>
+                  <Pane layoutX="14.0" layoutY="238.0" prefHeight="116.0" prefWidth="572.0" style="-fx-background-color: lightgrey;" />
+               </children></AnchorPane>
+      </content>
+    </Tab>
+    <Tab text="Tab2">
+      <content>
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+      </content>
+    </Tab>
+      <Tab text="Tab3">
+        <content>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+        </content>
+      </Tab>
+  </tabs>
+</TabPane>
