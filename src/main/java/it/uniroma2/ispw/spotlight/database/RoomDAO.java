@@ -159,11 +159,14 @@ public class RoomDAO extends DAO<Room>{
         // (only active reservations will be shown)
         ArrayList<Reservation> reservations = reservationDAO.getReservationsByEventID(eventID);
         for (Reservation reservation : reservations) {
-            if (room_map.containsKey(reservation.getRoomID()))
+            if (room_map.containsKey(reservation.getRoomID())) {
                 // add only if event is the one associated with the search
-                if (reservation.getEventID().equals(eventID))
-                    room_map.get(reservation.getRoomID()).addReservation(reservation);
-            else {
+                if (reservation.getEventID().equals(eventID)) {
+                    Room r = room_map.get(reservation.getRoomID());
+                    r.addReservation(reservation);
+                    room_map.replace(r.getRoomID(), r);
+                }
+            } else {
                 Room r = getRoomByID(reservation.getRoomID());
                 r.addReservation(reservation);
                 room_map.put(r.getRoomID(), r);
@@ -193,6 +196,8 @@ public class RoomDAO extends DAO<Room>{
     public void delete(Room room) throws Exception { /* no implementation needed */}
 
     public Room createRoomFromResultSet(ResultSet results) throws SQLException {
+
+        results.next();
 
         // creating room properties
         RoomProperties roomProperties = new RoomProperties(results.getInt("capacity"),

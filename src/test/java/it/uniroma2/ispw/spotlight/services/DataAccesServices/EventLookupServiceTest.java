@@ -1,10 +1,8 @@
 package it.uniroma2.ispw.spotlight.services.DataAccesServices;
 
+import it.uniroma2.ispw.spotlight.exceptions.*;
 import it.uniroma2.ispw.spotlight.helpers.CalendarHelper;
 import it.uniroma2.ispw.spotlight.entities.Event;
-import it.uniroma2.ispw.spotlight.exceptions.AuthRequiredException;
-import it.uniroma2.ispw.spotlight.exceptions.EventServiceException;
-import it.uniroma2.ispw.spotlight.exceptions.UserRetrievalException;
 import it.uniroma2.ispw.spotlight.users.InfoPointCrewMember;
 import it.uniroma2.ispw.spotlight.users.Teacher;
 import org.junit.jupiter.api.Assertions;
@@ -27,7 +25,7 @@ class EventLookupServiceTest {
     private Date end_date   = CalendarHelper.getDate(22, 4,2018, 11, 0);
 
     @Test
-    void getEventsByNameAndTime() throws EventServiceException, UserRetrievalException, AuthRequiredException {
+    void getEventsByNameAndTime() throws EventServiceException, UserRetrievalException, AuthRequiredException, ReservationServiceException, RoomServiceException {
         eventLookupService.setCurrentUser(testUserI);
 
         ArrayList<Event> events = eventLookupService.getEventsByNameAndStartDate(partialEventName, start_date);
@@ -40,7 +38,7 @@ class EventLookupServiceTest {
     }
 
     @Test
-    void getEventsOfCurrentUser() throws EventServiceException, AuthRequiredException {
+    void getEventsOfCurrentUser() throws EventServiceException, AuthRequiredException, RoomServiceException, ReservationServiceException {
         userEventLookupService.setCurrentUser(testUserT);
 
         ArrayList<Event> events = userEventLookupService.getCurrentUserEvents();

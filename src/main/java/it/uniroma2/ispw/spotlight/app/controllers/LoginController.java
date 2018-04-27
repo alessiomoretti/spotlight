@@ -20,14 +20,11 @@ import java.io.IOException;
 public class LoginController {
 
 
-    @FXML
-    private TextField loginUsername;
+    @FXML private TextField loginUsername;
 
-    @FXML
-    private PasswordField loginPassword;
+    @FXML private PasswordField loginPassword;
 
-    @FXML
-    private Text loginErrorText;
+    @FXML private Text loginErrorText;
 
     public LoginController() {}
 
@@ -51,7 +48,7 @@ public class LoginController {
                     // changing scene
                     Stage stage = (Stage) loginUsername.getScene().getWindow();
                     Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("spotlight.fxml"));
-                    Scene scene = new Scene(root, 1000, 800);
+                    Scene scene = new Scene(root, 1000, 600);
                     stage.setScene(scene);
                 }
             } catch(AuthServiceException e) {

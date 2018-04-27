@@ -5,6 +5,8 @@ import it.uniroma2.ispw.spotlight.entities.Event;
 import it.uniroma2.ispw.spotlight.exceptions.AuthRequiredException;
 import it.uniroma2.ispw.spotlight.database.EventDAO;
 import it.uniroma2.ispw.spotlight.exceptions.EventServiceException;
+import it.uniroma2.ispw.spotlight.exceptions.ReservationServiceException;
+import it.uniroma2.ispw.spotlight.exceptions.RoomServiceException;
 
 
 import java.util.ArrayList;
@@ -18,7 +20,7 @@ public class UserEventLookupService  extends EventLookupService {
         setDatabaseInterface(new EventDAO());
     }
 
-    public ArrayList<Event> getCurrentUserEvents() throws AuthRequiredException, EventServiceException {
+    public ArrayList<Event> getCurrentUserEvents() throws AuthRequiredException, EventServiceException, RoomServiceException, ReservationServiceException {
         if (hasCapability(getCurrentUser())) {
             return ((EventDAO) getDatabaseInterface()).getEventsByReferral(getCurrentUser());
         } else {

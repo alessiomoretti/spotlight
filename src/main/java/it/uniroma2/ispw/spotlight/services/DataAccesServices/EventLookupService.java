@@ -2,10 +2,8 @@ package it.uniroma2.ispw.spotlight.services.DataAccesServices;
 
 import it.uniroma2.ispw.spotlight.Constants;
 import it.uniroma2.ispw.spotlight.entities.Event;
-import it.uniroma2.ispw.spotlight.exceptions.AuthRequiredException;
+import it.uniroma2.ispw.spotlight.exceptions.*;
 import it.uniroma2.ispw.spotlight.database.EventDAO;
-import it.uniroma2.ispw.spotlight.exceptions.EventServiceException;
-import it.uniroma2.ispw.spotlight.exceptions.UserRetrievalException;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -19,7 +17,7 @@ public class EventLookupService extends DataAccessService<Event> {
         setDatabaseInterface(new EventDAO());
     }
 
-    public ArrayList<Event> getEventsByNameAndStartDate(String eventName, Date start) throws AuthRequiredException, UserRetrievalException, EventServiceException {
+    public ArrayList<Event> getEventsByNameAndStartDate(String eventName, Date start) throws AuthRequiredException, UserRetrievalException, EventServiceException, ReservationServiceException, RoomServiceException {
         if (hasCapability(getCurrentUser())) {
             // retrieving all the events containing the given name
             ArrayList<Event> retrievedEvents = ((EventDAO) getDatabaseInterface()).getEventsByName(eventName);
@@ -28,7 +26,7 @@ public class EventLookupService extends DataAccessService<Event> {
             ArrayList<Event> events = new ArrayList<>();
             // iterating over retrieved events to select the ones present or future
             for (Event event : retrievedEvents) {
-                if(event.getStartDateTime().getTime() <= start.getTime() || event.getEndDateTime().getTime() >= start.getTime())
+                if(event.getStartDateTime().getTime() <= start.getTime() && event.getEndDateTime().getTime() >= start.getTime())
                     events.add(event);
             }
             return events;

@@ -1,10 +1,14 @@
 package it.uniroma2.ispw.spotlight.database;
 
 import it.uniroma2.ispw.spotlight.entities.Event;
+import it.uniroma2.ispw.spotlight.entities.Room.Reservation;
+import it.uniroma2.ispw.spotlight.exceptions.ReservationServiceException;
+import it.uniroma2.ispw.spotlight.exceptions.RoomServiceException;
 import it.uniroma2.ispw.spotlight.users.User;
 import it.uniroma2.ispw.spotlight.exceptions.EventServiceException;
 import it.uniroma2.ispw.spotlight.exceptions.UserRetrievalException;
 
+import java.awt.*;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -15,12 +19,14 @@ import static java.sql.Statement.NO_GENERATED_KEYS;
 public class EventDAO extends DAO<Event> {
 
     private UserDAO userDAO;
+    private RoomDAO roomDAO;
 
     public EventDAO() {
         this.userDAO = new UserDAO();
+        this.roomDAO = new RoomDAO();
     }
 
-    public Event getEventById(String eventID) throws UserRetrievalException, EventServiceException {
+    public Event getEventById(String eventID) throws UserRetrievalException, EventServiceException, ReservationServiceException, RoomServiceException {
         // preparing query to select the event for a given id
         String sql = "SELECT * FROM events WHERE eventID=?";
 
@@ -40,7 +46,7 @@ public class EventDAO extends DAO<Event> {
         }
     }
 
-    public ArrayList<Event> getEventsByReferral(User referral) throws EventServiceException {
+    public ArrayList<Event> getEventsByReferral(User referral) throws EventServiceException, RoomServiceException, ReservationServiceException {
         // preparing query to select the event for a given referral
         String sql = "SELECT * FROM events WHERE referral=?";
 
@@ -61,7 +67,7 @@ public class EventDAO extends DAO<Event> {
         }
     }
 
-    public ArrayList<Event> getEventsByName(String eventName) throws UserRetrievalException, EventServiceException {
+    public ArrayList<Event> getEventsByName(String eventName) throws UserRetrievalException, EventServiceException, ReservationServiceException, RoomServiceException {
         // preparing query to get all the events containing the name
         String sql = "SELECT * FROM events WHERE event_name LIKE ?";
 
@@ -72,7 +78,7 @@ public class EventDAO extends DAO<Event> {
 
             // preparing statement
             PreparedStatement pstm = db.prepareStatement(sql, TYPE_SCROLL_INSENSITIVE, NO_GENERATED_KEYS);
-            pstm.setString(1, eventName);
+            pstm.setString(1, "%" + eventName + "%");
 
             ResultSet results = pstm.executeQuery();
             return getEventsFromResultSet(results);
@@ -82,7 +88,7 @@ public class EventDAO extends DAO<Event> {
         }
     }
 
-    public ArrayList<Event> getEventsByTime(Timestamp startT, Timestamp endT) throws UserRetrievalException, EventServiceException {
+    public ArrayList<Event> getEventsByTime(Timestamp startT, Timestamp endT) throws UserRetrievalException, EventServiceException, ReservationServiceException, RoomServiceException {
         // preparing query to retrieve events in the given timeslot
         String sql = "SELECT * FROM events WHERE (start_timestamp, end_timestamp) overlaps (?,?)";
 
@@ -159,7 +165,7 @@ public class EventDAO extends DAO<Event> {
         }
     }
 
-    public ArrayList<Event> getEventsFromResultSet(ResultSet results) throws SQLException, UserRetrievalException{
+    public ArrayList<Event> getEventsFromResultSet(ResultSet results) throws SQLException, UserRetrievalException, ReservationServiceException, RoomServiceException {
         ArrayList<Event> events = new ArrayList<>();
 
         if (!results.isBeforeFirst()) return events;
@@ -168,30 +174,40 @@ public class EventDAO extends DAO<Event> {
             // retrieving the referral as a User
             User referralUser = userDAO.getUserByUsername(results.getString("referral"));
 
-            events.add(new Event(results.getString("eventID"),
+            Event newEvent = new Event(results.getString("eventID"),
                     results.getString("event_name"),
                     new Date(results.getTimestamp("start_timestamp").getTime()),
                     new Date(results.getTimestamp("end_timestamp").getTime()),
                     referralUser,
-                    results.getString("mailing_list")));
+                    results.getString("mailing_list"));
+
+            // retrieving reserved rooms
+            newEvent.getReservedRooms().addAll(roomDAO.getRoomsByEvent(newEvent.getEventID()));
+
+            events.add(newEvent);
 
             if (!results.next()) break;
         }
         return events;
     }
 
-    public ArrayList<Event> getEventsFromResultSet(ResultSet results, User referral) throws SQLException {
+    public ArrayList<Event> getEventsFromResultSet(ResultSet results, User referral) throws SQLException, RoomServiceException, ReservationServiceException {
         ArrayList<Event> events = new ArrayList<>();
 
         if (!results.isBeforeFirst()) return events;
         results.first();
         while (true) {
-            events.add(new Event(results.getString("eventID"),
+            Event newEvent = new Event(results.getString("eventID"),
                     results.getString("event_name"),
                     new Date(results.getTimestamp("start_timestamp").getTime()),
                     new Date(results.getTimestamp("end_timestamp").getTime()),
                     referral,
-                    results.getString("mailing_list")));
+                    results.getString("mailing_list"));
+
+            // retrieving reserved rooms
+            newEvent.getReservedRooms().addAll(roomDAO.getRoomsByEvent(newEvent.getEventID()));
+
+            events.add(newEvent);
 
             if (!results.next()) break;
         }

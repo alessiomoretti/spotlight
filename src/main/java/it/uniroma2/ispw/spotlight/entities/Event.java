@@ -13,6 +13,7 @@ public class Event {
     private Date startDateTime;
     private Date endDateTime;
     private User referral;
+    private String referralName;
     private String emailDL;
     private ArrayList<Room> reservedRooms;
 
@@ -22,6 +23,7 @@ public class Event {
         this.startDateTime = startDateTime;
         this.endDateTime   = endDateTime;
         this.referral      = referral;
+        this.referralName  = referral.getName();
         this.emailDL       = emailDL;
 
         // initializing array of reserved Rooms
@@ -81,7 +83,10 @@ public class Event {
 
     public void setReferral(User referral) {
         this.referral = referral;
+        this.referralName = this.referral.getName();
     }
+
+    public String getReferralName() { return this.referralName; }
 
     public String getEmailDL() {
         return emailDL;

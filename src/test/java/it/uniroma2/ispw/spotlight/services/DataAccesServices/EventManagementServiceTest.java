@@ -1,10 +1,8 @@
 package it.uniroma2.ispw.spotlight.services.DataAccesServices;
 
+import it.uniroma2.ispw.spotlight.exceptions.*;
 import it.uniroma2.ispw.spotlight.helpers.CalendarHelper;
 import it.uniroma2.ispw.spotlight.entities.Event;
-import it.uniroma2.ispw.spotlight.exceptions.AuthRequiredException;
-import it.uniroma2.ispw.spotlight.exceptions.EventServiceException;
-import it.uniroma2.ispw.spotlight.exceptions.UserRetrievalException;
 import it.uniroma2.ispw.spotlight.users.Teacher;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -36,7 +34,7 @@ class EventManagementServiceTest {
     }
 
     @Test
-    void updateEvent() throws UserRetrievalException, EventServiceException, AuthRequiredException {
+    void updateEvent() throws UserRetrievalException, EventServiceException, AuthRequiredException, ReservationServiceException, RoomServiceException {
         // add user
         eventManagementService.setCurrentUser(testUserT);
         // setting services
