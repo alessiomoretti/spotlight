@@ -62,18 +62,6 @@ public class EventManagementService extends DataAccessService<Event> {
         return getEventLookupService().getCurrentUserEvents();
     }
 
-    public Event selectEventByID(String eventID) throws EventServiceException, UserRetrievalException, AuthRequiredException, ReservationServiceException, RoomServiceException {
-        if (hasCapability(getCurrentUser())) {
-            Event event = ((EventDAO) getEventLookupService().getDatabaseInterface()).getEventById(eventID);
-            if (event.getReferral().getUsername().equals(getCurrentUser().getUsername()))
-                return event;
-            else
-                return null;
-        } else {
-            throw new AuthRequiredException("This user has no privileges to access this service");
-        }
-    }
-
     public ReservationDAO getReservationDAO() {
         return roomManagementService.getReservationDAO();
     }

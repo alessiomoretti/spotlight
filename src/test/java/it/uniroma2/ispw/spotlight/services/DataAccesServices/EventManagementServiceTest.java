@@ -12,6 +12,7 @@ import java.util.Date;
 class EventManagementServiceTest {
 
     private EventManagementService eventManagementService = new EventManagementService();
+    private UserEventLookupService userEventLookupService = new UserEventLookupService();
     private Teacher testUserT = new Teacher("johndoe", "John", "Doe", "john.doe@uni.com", "History");
 
     private String eventName = "event01";
@@ -36,20 +37,22 @@ class EventManagementServiceTest {
     @Test
     void updateEvent() throws UserRetrievalException, EventServiceException, AuthRequiredException, ReservationServiceException, RoomServiceException {
         // add user
+        userEventLookupService.setCurrentUser(testUserT);
+        // add user
         eventManagementService.setCurrentUser(testUserT);
         // setting services
         eventManagementService.setRoomManagementService(new RoomManagementService());
         eventManagementService.setEventLookupService(new UserEventLookupService());
 
         // selecting event
-        Event event = eventManagementService.selectEventByID("event01-johndoe-1524341621");     // TODO parametrize
+        Event event = userEventLookupService.getEventByID("event01-johndoe-1524341621");     // TODO parametrize
         // updating event
         Date updatedEndDate = CalendarHelper.getDate(22, 4,2018, 16, 0);
         event.setEndDateTime(updatedEndDate);
         eventManagementService.updateEvent(event);
 
         // selecting event
-        event = eventManagementService.selectEventByID("event01-johndoe-1524341621");           // TODO parametrize
+        event = userEventLookupService.getEventByID("event01-johndoe-1524341621");           // TODO parametrize
         Assertions.assertEquals(event.getEndDateTime(), updatedEndDate);
     }
 }

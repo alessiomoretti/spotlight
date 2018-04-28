@@ -1,6 +1,5 @@
 package it.uniroma2.ispw.spotlight.app.controllers;
 
-import it.uniroma2.ispw.spotlight.exceptions.AuthRequiredException;
 import it.uniroma2.ispw.spotlight.exceptions.AuthServiceException;
 import it.uniroma2.ispw.spotlight.helpers.MD5Helper;
 import it.uniroma2.ispw.spotlight.services.LoginService;
@@ -14,7 +13,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-import java.awt.event.ActionEvent;
 import java.io.IOException;
 
 public class LoginController {
@@ -47,7 +45,7 @@ public class LoginController {
                 else {
                     // changing scene
                     Stage stage = (Stage) loginUsername.getScene().getWindow();
-                    Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("spotlight.fxml"));
+                    Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("fxml/spotlight.fxml"));
                     Scene scene = new Scene(root, 1000, 600);
                     stage.setScene(scene);
                 }
