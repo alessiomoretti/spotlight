@@ -6,10 +6,7 @@ import it.uniroma2.ispw.spotlight.entities.Room.RoomProperties;
 import it.uniroma2.ispw.spotlight.exceptions.RoomServiceException;
 import it.uniroma2.ispw.spotlight.exceptions.ReservationServiceException;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -22,6 +19,41 @@ public class RoomDAO extends DAO<Room>{
 
     public RoomDAO() {
         this.reservationDAO = new ReservationDAO();
+    }
+
+    public ArrayList<Room> getAllRooms() throws RoomServiceException, ReservationServiceException {
+        // preparing query to retrieve all the rooms
+        String sql = "SELECT * FROM rooms";
+
+        // retrieving results (no reservation info will be available)
+        try {
+            // retrieving database connection
+            Connection db = getConnection();
+
+            // preparing statement
+            PreparedStatement pstm = db.prepareStatement(sql, TYPE_SCROLL_INSENSITIVE, NO_GENERATED_KEYS);
+
+            // executing query
+            ResultSet results = pstm.executeQuery();
+
+            // preparing results and retrieving reservations
+            ArrayList<Room> rooms = new ArrayList<>();
+            results.first();
+            while (true) {
+                Room room = createRoomFromResultSet(results);
+                // adding reservations
+                for (Reservation reservation : reservationDAO.getReservationsByRoomID(room.getRoomID()))
+                    room.addReservation(reservation);
+                rooms.add(room);
+
+                if (!results.next()) break;
+            }
+
+            return rooms;
+        } catch (ClassNotFoundException | SQLException se) {
+            se.printStackTrace();
+            throw new RoomServiceException("Exception caught retrieving list of all rooms");
+        }
     }
 
     public Room getRoomByID(String roomID) throws RoomServiceException {
@@ -38,6 +70,7 @@ public class RoomDAO extends DAO<Room>{
             pstm.setString(1, roomID);
 
             ResultSet results = pstm.executeQuery();
+            results.first();
             return createRoomFromResultSet(results);
         } catch (ClassNotFoundException | SQLException se) {
             se.printStackTrace();
@@ -196,8 +229,6 @@ public class RoomDAO extends DAO<Room>{
     public void delete(Room room) throws Exception { /* no implementation needed */}
 
     public Room createRoomFromResultSet(ResultSet results) throws SQLException {
-
-        results.next();
 
         // creating room properties
         RoomProperties roomProperties = new RoomProperties(results.getInt("capacity"),

@@ -70,6 +70,13 @@ public class EventLookupController {
         roomStartDateTimeColumn.setCellValueFactory(new PropertyValueFactory<RoomRow, String>("startDateTime"));
         roomEndDateTimeColumn.setCellValueFactory(new PropertyValueFactory<RoomRow, String>("endDateTime"));
 
+        // adding selection listener on event to populate details section
+        eventsTable.getSelectionModel().selectedItemProperty()
+                .addListener((obs, oldSelection, newSelection) -> {
+                    if (newSelection != null)
+                        populateEventDetails(newSelection);
+                });
+
         // visualizing "current user only" checkbox only if Teacher or Adm. Staff
         try {
             if (ServiceManager.getInstance().getLoginService()
@@ -126,12 +133,6 @@ public class EventLookupController {
             // updating tableview
             eventsTable.getItems().setAll(eventRows);
 
-            // adding selection listener to populate details section
-            eventsTable.getSelectionModel().selectedItemProperty()
-                    .addListener((obs, oldSelection, newSelection) -> {
-                        if (newSelection != null)
-                            populateEventDetails(newSelection);
-                    });
         } catch (AuthRequiredException e) {
             e.printStackTrace();
             AlertHelper.DisplayErrorAlert("User authentication failed", "");
@@ -181,7 +182,7 @@ public class EventLookupController {
         paneEventDetails.setVisible(true);
         paneEventTimeDetails.setVisible(true);
 
-        // retrieving date format
+        // retrieving date formatter
         SimpleDateFormat df = new SimpleDateFormat("MMM dd, YYYY HH:mm");
 
         // populating detail panes

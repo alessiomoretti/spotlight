@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
 
-<AnchorPane prefHeight="500.0" prefWidth="590" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.uniroma2.ispw.spotlight.app.controllers.EventLookupController">
+<AnchorPane prefHeight="600.0" prefWidth="1000" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.uniroma2.ispw.spotlight.app.controllers.EventLookupController">
             <children>
                 <TextField fx:id="searchTextField" layoutX="14.0" layoutY="14.0" prefHeight="28.0" prefWidth="327.0" />
                 <Button layoutX="515.0" layoutY="14.0" mnemonicParsing="false" onAction="#searchEventButtonClick" style="-fx-background-color: #6e6d6d;" text="SEARCH" textFill="WHITE" />
