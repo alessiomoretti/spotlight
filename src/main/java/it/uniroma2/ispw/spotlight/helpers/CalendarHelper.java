@@ -1,5 +1,8 @@
 package it.uniroma2.ispw.spotlight.helpers;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -24,5 +27,10 @@ public class CalendarHelper {
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
         return calendar.getTime();
+    }
+
+    public static LocalDate getLocalDate(Date date) {
+        LocalDate d = Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
+        return d;
     }
 }

@@ -6,6 +6,7 @@ import it.uniroma2.ispw.spotlight.database.ReservationDAO;
 import it.uniroma2.ispw.spotlight.database.RoomDAO;
 import it.uniroma2.ispw.spotlight.entities.Event;
 import it.uniroma2.ispw.spotlight.exceptions.*;
+import it.uniroma2.ispw.spotlight.services.ServiceManager;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -17,7 +18,6 @@ public class EventManagementService extends DataAccessService<Event> {
     private Event currentEvent;
 
     private RoomManagementService roomManagementService;
-    private UserEventLookupService eventLookupService;
 
     public EventManagementService() {
         // setting correct DAO to access event database
@@ -30,8 +30,6 @@ public class EventManagementService extends DataAccessService<Event> {
             String newEventID = eventName + "-" + getCurrentUser().getUsername() + "-" + String.valueOf(Instant.now().getEpochSecond());
             // generating new event
             Event event = new Event(newEventID, eventName, startT, endT, getCurrentUser(), getCurrentUser().getEmailAddress());
-            setCurrentEvent(new Event(newEventID, eventName, getCurrentUser()));
-
             // inserting event into DB
             ((EventDAO) getDatabaseInterface()).update(event);
             return event;
@@ -58,36 +56,18 @@ public class EventManagementService extends DataAccessService<Event> {
         }
     }
 
-    public ArrayList<Event> getUserEvents() throws EventServiceException, AuthRequiredException, RoomServiceException, ReservationServiceException {
-        return getEventLookupService().getCurrentUserEvents();
-    }
-
     public ReservationDAO getReservationDAO() {
         return roomManagementService.getReservationDAO();
     }
 
-    public RoomDAO getRoomDAO() {
+    public RoomDAO getRoomDAO() throws AuthRequiredException {
+        if (this.roomManagementService == null)
+            ServiceManager.getInstance().getRoomManagementService();
         return (RoomDAO) roomManagementService.getDatabaseInterface();
-    }
-
-    public UserEventLookupService getEventLookupService() {
-        return eventLookupService;
-    }
-
-    public Event getCurrentEvent() {
-        return currentEvent;
-    }
-
-    public void setCurrentEvent(Event currentEvent) {
-        this.currentEvent = currentEvent;
     }
 
     public void setRoomManagementService(RoomManagementService roomManagementService) {
         this.roomManagementService = roomManagementService;
-    }
-
-    public void setEventLookupService(UserEventLookupService eventLookupService) {
-        this.eventLookupService = eventLookupService;
     }
 
 }

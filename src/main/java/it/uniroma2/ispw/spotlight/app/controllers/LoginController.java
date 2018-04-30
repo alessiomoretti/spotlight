@@ -43,10 +43,11 @@ public class LoginController {
                 if (!authenticated)
                     loginErrorText.setVisible(true);
                 else {
-                    // changing scene
+                    // changing scene to main app
                     Stage stage = (Stage) loginUsername.getScene().getWindow();
                     Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("fxml/spotlight.fxml"));
                     Scene scene = new Scene(root, 1000, 600);
+                    stage.setTitle("Spotlight - App");
                     stage.setScene(scene);
                 }
             } catch(AuthServiceException e) {

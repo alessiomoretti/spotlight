@@ -42,7 +42,6 @@ class EventManagementServiceTest {
         eventManagementService.setCurrentUser(testUserT);
         // setting services
         eventManagementService.setRoomManagementService(new RoomManagementService());
-        eventManagementService.setEventLookupService(new UserEventLookupService());
 
         // selecting event
         Event event = userEventLookupService.getEventByID("event01-johndoe-1524341621");     // TODO parametrize
