@@ -41,7 +41,6 @@ public class ServiceManager {
         if (this.eventManagementService == null) {
             eventManagementService = new EventManagementService();
             eventManagementService.setCurrentUser(getLoginService().getCurrentUser());
-            eventManagementService.setEventLookupService(getUserEventLookupService());
             eventManagementService.setRoomManagementService(getRoomManagementService());
         }
         return eventManagementService;

@@ -125,8 +125,6 @@ public class RoomLookupController {
                                 dfHour.format(reservation.getEndDateTime())));
                     } else {
                         // if administrative staff - events are shown
-                        System.out.println(reservation.getEventID());
-                        System.out.println(userEventLookupService.getEventByID(reservation.getEventID()).getReferral());
                         reservationRows.add(new ReservationRow(userEventLookupService.getEventByID(reservation.getEventID()).getEventName(),
                                 dfDay.format(reservation.getStartDateTime()),
                                 dfHour.format(reservation.getStartDateTime()),

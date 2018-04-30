@@ -9,7 +9,9 @@ import it.uniroma2.ispw.spotlight.exceptions.RoomServiceException;
 import it.uniroma2.ispw.spotlight.database.ReservationDAO;
 import it.uniroma2.ispw.spotlight.database.RoomDAO;
 import it.uniroma2.ispw.spotlight.exceptions.ReservationServiceException;
+import it.uniroma2.ispw.spotlight.services.ServiceManager;
 
+import javax.xml.ws.Service;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -26,8 +28,6 @@ public class RoomManagementService extends DataAccessService<Room> {
     public RoomManagementService() {
         // setting correct DAO to access rooms database
         setDatabaseInterface(new RoomDAO());
-        // setting lookup service
-        this.roomLookup = new RoomLookupService();
         // setting DAO to access reservations
         this.reservationDAO = new ReservationDAO();
     }
@@ -37,6 +37,8 @@ public class RoomManagementService extends DataAccessService<Room> {
             throw new AuthRequiredException("This user has no privileges to access this service");
 
         // retrieving all rooms with the desired properties
+        if (getRoomLookup() == null)
+            this.roomLookup = ServiceManager.getInstance().getRoomLookupService();
         ArrayList<Room> allRooms = getRoomLookup().findRoomByProperties(properties, department);
 
         // check if a room is available in the desired timespan

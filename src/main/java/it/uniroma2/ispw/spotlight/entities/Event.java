@@ -16,6 +16,7 @@ public class Event {
     private String referralName;
     private String emailDL;
     private ArrayList<Room> reservedRooms;
+    private Integer reservations;
 
     public Event(String eventID, String eventName, Date startDateTime, Date endDateTime, User referral, String emailDL) {
         this.eventID       = eventID;
@@ -38,10 +39,12 @@ public class Event {
 
     public void addReservedRoom(Room room) {
         getReservedRooms().add(room);
+        this.reservations += 1;
     }
 
     public void delReservedRoom(Room room) {
         getReservedRooms().remove(room);
+        this.reservations -= 1;
     }
 
     public void clearReservedRooms(Room room) {
@@ -50,6 +53,10 @@ public class Event {
 
     public String getEventID() {
         return eventID;
+    }
+
+    public void setEventName(String eventName) {
+        this.eventName = eventName;
     }
 
     public String getEventName() {
@@ -98,6 +105,11 @@ public class Event {
 
     public ArrayList<Room> getReservedRooms() {
         return reservedRooms;
+    }
+
+    public Integer getReservations() {
+        this.reservations = getReservedRooms().size();
+        return this.reservations;
     }
 
 }
