@@ -13,7 +13,7 @@ CREATE TABLE rooms (
   id                     SERIAL,
   roomID                 VARCHAR NOT NULL PRIMARY KEY,
   name                   VARCHAR NOT NULL,
-  department             VARCHAR NOT NULL,
+  department             VARCHAR NOT NULL REFERENCES departments(department),
   capacity               INTEGER NOT NULL,
   projector              INTEGER NOT NULL,
   whiteboard             INTEGER NOT NULL,
@@ -38,4 +38,9 @@ CREATE TABLE reservations (
   referral               VARCHAR NOT NULL REFERENCES users(username),
   start_timestamp        TIMESTAMP NOT NULL,
   end_timestamp          TIMESTAMP NOT NULL
+);
+
+CREATE TABLE departments (
+  id                     SERIAL,
+  department             VARCHAR NOT NULL PRIMARY KEY
 );

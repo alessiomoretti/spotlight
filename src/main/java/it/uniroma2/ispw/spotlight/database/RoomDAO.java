@@ -210,6 +210,34 @@ public class RoomDAO extends DAO<Room>{
         return new ArrayList<>(room_map.values());
     }
 
+    public ArrayList<String> getDepartments() throws RoomServiceException {
+        // preparing sql to retrieve all the departments
+        String sql = "SELECT * FROM departments";
+
+        // retrieving results
+        try {
+            ArrayList<String> departments = new ArrayList<>();
+
+            // retrieving database connection
+            Connection db = getConnection();
+
+            // preparing statement
+            PreparedStatement pstm = db.prepareStatement(sql, TYPE_SCROLL_INSENSITIVE, NO_GENERATED_KEYS);
+
+            ResultSet results = pstm.executeQuery();
+
+            results.first();
+            while (true) {
+                departments.add(results.getString("department"));
+                if (!results.next()) break;
+            }
+
+            return departments;
+        } catch (ClassNotFoundException | SQLException e) {
+            throw new RoomServiceException("Exception caught handling room department retrieval");
+        }
+    }
+
     @Override
     public void update(Room room) throws RoomServiceException {
 
