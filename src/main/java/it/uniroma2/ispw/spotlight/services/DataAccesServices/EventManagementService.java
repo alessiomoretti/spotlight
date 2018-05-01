@@ -55,7 +55,6 @@ public class EventManagementService extends DataAccessService<Event> {
             for (Room room : event.getReservedRooms()) {
                 for (Reservation reservation : room.getReservations()) {
                     if (reservation.getEventID().equals(event.getEventID())) {
-                        room.delReservation(reservation);
                         getReservationDAO().delete(reservation);
                     }
                 }

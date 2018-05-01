@@ -191,6 +191,14 @@ public class EventManagerController {
                         }
                     });
 
+            // updating selected event if any
+            if (selectedEvent != null) {
+                for (Event event: events) {
+                    if (event.getEventID().equals(selectedEvent.getEventID()))
+                        selectedEvent = event;
+                }
+            }
+
         } catch (AuthRequiredException e) {
             e.printStackTrace();
             AlertHelper.DisplayErrorAlert("User authentication failed", "");
@@ -226,7 +234,7 @@ public class EventManagerController {
 
     }
 
-    private void populateReservationsTable(Event event) throws AuthRequiredException {
+    public void populateReservationsTable(Event event) throws AuthRequiredException {
         // preparing date formatters
         SimpleDateFormat dfDay = new SimpleDateFormat("MMM dd, YYYY");
         SimpleDateFormat dfHour = new SimpleDateFormat("HH:mm");
@@ -332,8 +340,9 @@ public class EventManagerController {
             AlertHelper.DisplayErrorAlert("Error occured deleting event", "");
             e.printStackTrace();
         } finally {
-            // refreshing table view
+            // refreshing tables view
             populateEventsTable();
+            reservationsTable.getItems().clear();
             // refreshing event details
             eventIDLabel.setText("-");
             referralLabel.setText("-");

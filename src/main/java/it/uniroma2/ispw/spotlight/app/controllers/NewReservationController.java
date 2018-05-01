@@ -147,6 +147,7 @@ public class NewReservationController {
                     AlertHelper.DisplayConfirmationAlert("Room successfully reserved", "");
                     // refreshing EventManager
                     getEventManagerController().populateEventsTable();
+                    getEventManagerController().populateReservationsTable(getEventManagerController().getSelectedEvent());
                     // closing the reservation window
                     Stage stage = (Stage) newReservationButton.getScene().getWindow();
                     stage.close();
