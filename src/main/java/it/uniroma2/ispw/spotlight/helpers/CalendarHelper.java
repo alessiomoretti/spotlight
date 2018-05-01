@@ -11,7 +11,7 @@ public class CalendarHelper {
     public static Date getDate(Integer day, Integer month, Integer year, Integer hour, Integer minute) {
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.DAY_OF_MONTH, day);
-        calendar.set(Calendar.MONTH, month - 1);
+        calendar.set(Calendar.MONTH, month);
         calendar.set(Calendar.YEAR, year);
         calendar.set(Calendar.HOUR_OF_DAY, hour);
         calendar.set(Calendar.MINUTE, minute);
