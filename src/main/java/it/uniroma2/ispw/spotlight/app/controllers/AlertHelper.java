@@ -19,4 +19,12 @@ public class AlertHelper {
         alert.setContentText(infoDetails);
         alert.show();
     }
+
+    public static Alert DisplayConfirmationAlert(String infoMessage) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("CONFIRM");
+        alert.setHeaderText(infoMessage);
+        alert.showAndWait();
+        return alert;
+    }
 }
