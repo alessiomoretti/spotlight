@@ -1,4 +1,4 @@
-package it.uniroma2.ispw.spotlight.app.controllers;
+package it.uniroma2.ispw.spotlight.app.controllers.helpers;
 
 import javafx.scene.control.Alert;
 

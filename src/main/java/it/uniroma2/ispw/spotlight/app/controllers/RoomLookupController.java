@@ -1,7 +1,7 @@
 package it.uniroma2.ispw.spotlight.app.controllers;
 
 import it.uniroma2.ispw.spotlight.Constants;
-import it.uniroma2.ispw.spotlight.entities.Event;
+import it.uniroma2.ispw.spotlight.app.controllers.helpers.AlertHelper;
 import it.uniroma2.ispw.spotlight.entities.Room.Reservation;
 import it.uniroma2.ispw.spotlight.entities.Room.Room;
 import it.uniroma2.ispw.spotlight.exceptions.*;
@@ -12,10 +12,7 @@ import it.uniroma2.ispw.spotlight.services.ServiceManager;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.text.SimpleDateFormat;

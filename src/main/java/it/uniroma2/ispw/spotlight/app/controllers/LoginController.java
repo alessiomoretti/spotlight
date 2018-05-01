@@ -1,5 +1,7 @@
 package it.uniroma2.ispw.spotlight.app.controllers;
 
+import it.uniroma2.ispw.spotlight.app.controllers.helpers.AlertHelper;
+import it.uniroma2.ispw.spotlight.app.controllers.helpers.StageHelper;
 import it.uniroma2.ispw.spotlight.exceptions.AuthServiceException;
 import it.uniroma2.ispw.spotlight.helpers.MD5Helper;
 import it.uniroma2.ispw.spotlight.services.LoginService;

@@ -1,5 +1,6 @@
 package it.uniroma2.ispw.spotlight.app.controllers;
 
+import it.uniroma2.ispw.spotlight.app.controllers.helpers.AlertHelper;
 import it.uniroma2.ispw.spotlight.entities.Event;
 import it.uniroma2.ispw.spotlight.entities.Room.Reservation;
 import it.uniroma2.ispw.spotlight.entities.Room.Room;
@@ -21,13 +22,10 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
-import javax.swing.*;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 
