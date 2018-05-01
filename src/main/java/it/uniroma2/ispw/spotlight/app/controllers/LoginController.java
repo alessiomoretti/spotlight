@@ -19,9 +19,7 @@ public class LoginController {
 
 
     @FXML private TextField loginUsername;
-
     @FXML private PasswordField loginPassword;
-
     @FXML private Text loginErrorText;
 
     public LoginController() {}

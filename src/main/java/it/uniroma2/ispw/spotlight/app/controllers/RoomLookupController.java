@@ -24,24 +24,24 @@ import java.util.ArrayList;
 
 public class RoomLookupController {
 
-    @FXML TableView<ReservationRow> reservationsTable;
-    @FXML TableView<Room> roomsTable;
+    @FXML private TableView<ReservationRow> reservationsTable;
+    @FXML private TableView<Room> roomsTable;
 
-    @FXML TableColumn<ReservationRow, String> reservationColumn;
-    @FXML TableColumn<ReservationRow, String> startDayColumn;
-    @FXML TableColumn<ReservationRow, String> startHourColumn;
-    @FXML TableColumn<ReservationRow, String> endDayColumn;
-    @FXML TableColumn<ReservationRow, String> endHourColumn;
+    @FXML private TableColumn<ReservationRow, String> reservationColumn;
+    @FXML private  TableColumn<ReservationRow, String> startDayColumn;
+    @FXML private TableColumn<ReservationRow, String> startHourColumn;
+    @FXML private TableColumn<ReservationRow, String> endDayColumn;
+    @FXML private TableColumn<ReservationRow, String> endHourColumn;
 
-    @FXML TableColumn<Room, String> roomNameColumn;
-    @FXML TableColumn<Room, String> roomDeptColumn;
+    @FXML private TableColumn<Room, String> roomNameColumn;
+    @FXML private TableColumn<Room, String> roomDeptColumn;
 
-    @FXML CheckBox microphoneCheckbox;
-    @FXML CheckBox whiteboardCheckbox;
-    @FXML CheckBox intWhiteboardCheckbox;
-    @FXML CheckBox videocallCheckbox;
-    @FXML CheckBox projectorCheckbox;
-    @FXML Label capacityLabel;
+    @FXML private CheckBox microphoneCheckbox;
+    @FXML private CheckBox whiteboardCheckbox;
+    @FXML private CheckBox intWhiteboardCheckbox;
+    @FXML private CheckBox videocallCheckbox;
+    @FXML private CheckBox projectorCheckbox;
+    @FXML private Label capacityLabel;
 
     private ArrayList<Room> rooms;
 

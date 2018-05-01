@@ -33,11 +33,11 @@ public class EventManagerController {
 
     @FXML private Label userLabel;
 
-    @FXML Button saveEventButton;
-    @FXML Button newEventButton;
-    @FXML Button deleteEventButton;
-    @FXML Button newReservationButton;
-    @FXML Button deleteReservationButton;
+    @FXML private Button saveEventButton;
+    @FXML private Button newEventButton;
+    @FXML private Button deleteEventButton;
+    @FXML private Button newReservationButton;
+    @FXML private Button deleteReservationButton;
 
     @FXML private TableView<Event> eventsTable;
     @FXML private TableColumn<Event, String> eventNameColumn;
@@ -143,7 +143,7 @@ public class EventManagerController {
         saveEventButton.setDisable(true);
     }
 
-    private void populateEventsTable() {
+    public void populateEventsTable() {
         try {
             // retrieving event lookup service
             UserEventLookupService userEventLookupService = ServiceManager.getInstance().getUserEventLookupService();
@@ -300,7 +300,7 @@ public class EventManagerController {
         Parent root = null;
         try {
             root = FXMLLoader.load(getClass().getClassLoader().getResource("fxml/newevent.fxml"));
-            Scene scene = new Scene(root, 460, 360);
+            Scene scene = new Scene(root, 450, 360);
             Stage stage = new Stage();
             stage.setTitle("Spotlight - New Event");
             stage.setScene(scene);
