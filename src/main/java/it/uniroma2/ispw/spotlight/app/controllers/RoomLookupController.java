@@ -135,7 +135,7 @@ public class RoomLookupController {
             }
 
             // updating tableview
-            reservationsTable.getItems().addAll(reservationRows);
+            reservationsTable.getItems().setAll(reservationRows);
 
         } catch (AuthRequiredException | UserRetrievalException e) {
             e.printStackTrace();
