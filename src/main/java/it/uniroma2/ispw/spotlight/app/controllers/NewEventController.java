@@ -106,7 +106,7 @@ public class NewEventController {
                 AlertHelper.DisplayConfirmationAlert("Event successfully created!", "");
 
                 // refreshing EventManager
-                this.eventManagerController.populateEventsTable();
+                getEventManagerController().populateEventsTable();
 
             } catch (AuthRequiredException e) {
                 AlertHelper.DisplayErrorAlert("User authentication failed", "");

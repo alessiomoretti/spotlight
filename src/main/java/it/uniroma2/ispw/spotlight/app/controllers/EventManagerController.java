@@ -377,7 +377,7 @@ public class EventManagerController {
             root = (Parent)fxmlLoader.load();
 
             // passing the current controller
-            NewEventController newEventController = fxmlLoader.<NewEventController>getController();
+            NewReservationController newEventController = fxmlLoader.<NewReservationController>getController();
             newEventController.setEventManagerController(this);
 
             Scene scene = new Scene(root, 450, 360);
@@ -388,6 +388,10 @@ public class EventManagerController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public Event getSelectedEvent() {
+        return selectedEvent;
     }
 
     public class RoomReservationRow {
