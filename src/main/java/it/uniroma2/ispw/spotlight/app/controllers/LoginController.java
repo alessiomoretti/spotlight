@@ -45,6 +45,7 @@ public class LoginController {
                     Stage stage = (Stage) loginUsername.getScene().getWindow();
                     Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("fxml/spotlight.fxml"));
                     Scene scene = new Scene(root, 1000, 600);
+                    StageHelper.centerStage(stage, 1000, 600);
                     stage.setTitle("Spotlight - App");
                     stage.setScene(scene);
                 }
