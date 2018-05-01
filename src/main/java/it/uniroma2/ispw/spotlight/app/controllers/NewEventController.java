@@ -46,7 +46,7 @@ public class NewEventController {
 
         // pre setting referral and mailing list
         if (currentUser != null) {
-            eventReferralTextField.setText(currentUser.getName());
+            eventReferralTextField.setText(currentUser.getUsername());
             eventReferralTextField.setDisable(true);
             eventMailTextField.setText(currentUser.getEmailAddress());
             eventMailTextField.setDisable(true);
@@ -57,8 +57,8 @@ public class NewEventController {
             startHourChoiceBox.getItems().add(i);
             endHourChoiceBox.getItems().add(i);
         }
-        startMinuteChoiceBox.getItems().setAll("0", "15", "30", "45");
-        endMinuteChoiceBox.getItems().setAll("0", "15", "30", "45");
+        startMinuteChoiceBox.getItems().setAll("00", "15", "30", "45");
+        endMinuteChoiceBox.getItems().setAll("00", "15", "30", "45");
 
         // adding action on new event button
         newEventButton.setOnAction(new EventHandler<ActionEvent>() {

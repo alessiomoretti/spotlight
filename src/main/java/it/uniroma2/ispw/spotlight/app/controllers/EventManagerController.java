@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
@@ -60,6 +61,12 @@ public class EventManagerController {
     @FXML private DatePicker startDateCalendar;
     @FXML private DatePicker endDateCalendar;
 
+
+    @FXML private ChoiceBox<Integer> startHourChoiceBox;
+    @FXML private ChoiceBox<Integer> endHourChoiceBox;
+    @FXML private ChoiceBox<String> startMinuteChoiceBox;
+    @FXML private ChoiceBox<String> endMinuteChoiceBox;
+
     private ArrayList<Event> events;
     private Event selectedEvent;
     private RoomReservationRow selectedReservationRow;
@@ -94,6 +101,14 @@ public class EventManagerController {
 
         // attaching events to buttons
         addButtonListeners();
+
+        // populating choiceboxes
+        for (int i = 8; i <= 20; i++) {
+            startHourChoiceBox.getItems().add(i);
+            endHourChoiceBox.getItems().add(i);
+        }
+        startMinuteChoiceBox.getItems().setAll("00", "15", "30", "45");
+        endMinuteChoiceBox.getItems().setAll("00", "15", "30", "45");
     }
 
     private void addButtonListeners() {
@@ -188,10 +203,26 @@ public class EventManagerController {
     private void populateEventDetails(Event event) {
         eventIDLabel.setText(event.getEventID());
         referralLabel.setText(event.getReferral().getUsername());
+
         eventNameTextField.setText(event.getEventName());
         mailingListTextField.setText(event.getEmailDL());
+
+        LocalDateTime startDateLDT = CalendarHelper.getLocalDateTime(event.getStartDateTime());
+        LocalDateTime endDateLDT   = CalendarHelper.getLocalDateTime(event.getEndDateTime());
         startDateCalendar.setValue(CalendarHelper.getLocalDate(event.getStartDateTime()));
-        endDateCalendar.setValue(CalendarHelper.getLocalDate(event.getStartDateTime()));
+        endDateCalendar.setValue(CalendarHelper.getLocalDate(event.getEndDateTime()));
+        startHourChoiceBox.setValue(startDateLDT.getHour());
+        endHourChoiceBox.setValue(endDateLDT.getHour());
+        // minutes
+        String startMinute = String.valueOf(startDateLDT.getMinute());
+        if (startMinute.equals("0"))
+            startMinute = "00";
+        String endMinute   = String.valueOf(endDateLDT.getMinute());
+        if (endMinute.equals("0"))
+            endMinute = "00";
+        startMinuteChoiceBox.setValue(startMinute);
+        endMinuteChoiceBox.setValue(endMinute);
+
 
     }
 
@@ -244,9 +275,29 @@ public class EventManagerController {
         } else {
             return;
         }
-        event.setStartDateTime(Date.from(Instant.from(startDateCalendar.getValue().atStartOfDay(ZoneId.systemDefault()))));
-        event.setEndDateTime(Date.from(Instant.from(endDateCalendar.getValue().atStartOfDay(ZoneId.systemDefault()))));
 
+        // creating event dates
+        LocalDate startDateL = startDateCalendar.getValue();
+        LocalDate endDateL   = endDateCalendar.getValue();
+        Date startDate = CalendarHelper.getDate(startDateL.getDayOfMonth(),
+                startDateL.getMonthValue(),
+                startDateL.getYear(),
+                startHourChoiceBox.getValue(),
+                Integer.valueOf(startMinuteChoiceBox.getValue()));
+        Date endDate   = CalendarHelper.getDate(endDateL.getDayOfMonth(),
+                endDateL.getMonthValue(),
+                endDateL.getYear(),
+                endHourChoiceBox.getValue(),
+                Integer.valueOf(endMinuteChoiceBox.getValue()));
+
+        // consistency check on dates and times
+        if (endDate.before(startDate)) {
+            AlertHelper.DisplayErrorAlert("Error on input parameters", "The end date time must be after the start date time");
+            return;
+        }
+
+        event.setStartDateTime(startDate);
+        event.setEndDateTime(endDate);
 
         try {
             // retrieving service to update the event
@@ -269,8 +320,11 @@ public class EventManagerController {
         try {
             // retrieving service
             EventManagementService eventManagementService = ServiceManager.getInstance().getEventManagementService();
-            // deleting event
-            eventManagementService.deleteEvent(event);
+            // deleting event after user confirmation
+            Alert alert = AlertHelper.DisplayConfirmationAlert("Are you sure you want to delete the event " + event.getEventID() + "?");
+            if (alert.getResult() == ButtonType.OK) {
+                eventManagementService.deleteEvent(event);
+            }
         } catch (AuthRequiredException e) {
             AlertHelper.DisplayErrorAlert("User authentication failed", "");
             e.printStackTrace();
@@ -299,7 +353,13 @@ public class EventManagerController {
     private void openNewEventScene() {
         Parent root = null;
         try {
-            root = FXMLLoader.load(getClass().getClassLoader().getResource("fxml/newevent.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("fxml/newevent.fxml"));
+            root = (Parent)fxmlLoader.load();
+
+            // passing the current controller
+            NewEventController newEventController = fxmlLoader.<NewEventController>getController();
+            newEventController.setEventManagerController(this);
+
             Scene scene = new Scene(root, 450, 360);
             Stage stage = new Stage();
             stage.setTitle("Spotlight - New Event");
@@ -313,8 +373,14 @@ public class EventManagerController {
     private void openNewReservationScene() {
         Parent root = null;
         try {
-            root = FXMLLoader.load(getClass().getClassLoader().getResource("fxml/newreservation.fxml"));
-            Scene scene = new Scene(root, 470, 360);
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("fxml/newreservation.fxml"));
+            root = (Parent)fxmlLoader.load();
+
+            // passing the current controller
+            NewEventController newEventController = fxmlLoader.<NewEventController>getController();
+            newEventController.setEventManagerController(this);
+
+            Scene scene = new Scene(root, 450, 360);
             Stage stage = new Stage();
             stage.setTitle("Spotlight - New Reservation");
             stage.setScene(scene);
