@@ -11,6 +11,8 @@ import it.uniroma2.ispw.spotlight.services.DataAccesServices.UserEventLookupServ
 import it.uniroma2.ispw.spotlight.services.ServiceManager;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -40,6 +42,8 @@ public class RoomLookupController {
     @FXML private CheckBox projectorCheckbox;
     @FXML private Label capacityLabel;
 
+    @FXML private Button refreshButton;
+
     private ArrayList<Room> rooms;
 
     public RoomLookupController() { }
@@ -66,6 +70,16 @@ public class RoomLookupController {
                     if (newSelection != null)
                         populateRoomReservationAndDetails(newSelection);
                 });
+
+        // adding action on refresh button
+        refreshButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                roomsTable.getItems().clear();
+                populateRoomsTable();
+            }
+        });
+
     }
 
     private void populateRoomsTable() {
