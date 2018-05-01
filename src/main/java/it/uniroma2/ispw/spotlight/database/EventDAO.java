@@ -148,7 +148,7 @@ public class EventDAO extends DAO<Event> {
     @Override
     public void delete(Event event) throws EventServiceException {
         // preparing the delete query
-        String sql = "DELETE FROM events WHERE eventID=" + event.getEventID();
+        String sql = "DELETE FROM events WHERE eventID=?";
 
         try {
             // retrieving database connection
@@ -156,6 +156,7 @@ public class EventDAO extends DAO<Event> {
 
             // preparing statement
             PreparedStatement pstmt = getConnection().prepareStatement(sql);
+            pstmt.setString(1, event.getEventID());
             pstmt.execute();
 
             db.commit();

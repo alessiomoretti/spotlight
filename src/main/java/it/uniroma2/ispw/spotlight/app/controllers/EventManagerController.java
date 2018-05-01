@@ -64,6 +64,8 @@ public class EventManagerController {
     private Event selectedEvent;
     private RoomReservationRow selectedReservationRow;
 
+    public EventManagerController() { }
+
     @FXML
     public void initialize() {
         try {
@@ -133,6 +135,12 @@ public class EventManagerController {
                 openNewEventScene();
             }
         });
+
+        // disabling  buttons
+        deleteEventButton.setDisable(true);
+        deleteReservationButton.setDisable(true);
+        newReservationButton.setDisable(true);
+        saveEventButton.setDisable(true);
     }
 
     private void populateEventsTable() {
@@ -154,6 +162,11 @@ public class EventManagerController {
                             selectedEvent = newSelection;
                             // populate event details
                             populateEventDetails(newSelection);
+                            // enabling delete button
+                            deleteEventButton.setDisable(false);
+                            // enabling update buttons
+                            newReservationButton.setDisable(false);
+                            saveEventButton.setDisable(false);
                             // populate reservations
                             try {
                                 populateReservationsTable(newSelection);
@@ -212,6 +225,8 @@ public class EventManagerController {
                     if (newSelection != null) {
                         // setting the currently selected reservation row
                         selectedReservationRow = newSelection;
+                        // enabling delete button
+                        deleteReservationButton.setDisable(false);
                     }
                 });
 
@@ -244,14 +259,37 @@ public class EventManagerController {
         } catch (AuthRequiredException e) {
             AlertHelper.DisplayErrorAlert("Error occured updating event", "");
             e.printStackTrace();
+        } finally {
+            // refreshing view
+            populateEventsTable();
         }
-
-        // refreshing view
-        populateEventsTable();
     }
 
     private void deleteEvent(Event event) {
-
+        try {
+            // retrieving service
+            EventManagementService eventManagementService = ServiceManager.getInstance().getEventManagementService();
+            // deleting event
+            eventManagementService.deleteEvent(event);
+        } catch (AuthRequiredException e) {
+            AlertHelper.DisplayErrorAlert("User authentication failed", "");
+            e.printStackTrace();
+        } catch (EventServiceException | ReservationServiceException | RoomServiceException e) {
+            AlertHelper.DisplayErrorAlert("Error occured deleting event", "");
+            e.printStackTrace();
+        } finally {
+            // refreshing table view
+            populateEventsTable();
+            // refreshing event details
+            eventIDLabel.setText("-");
+            referralLabel.setText("-");
+            eventNameTextField.clear();
+            mailingListTextField.clear();
+            startDateCalendar.setValue(null);
+            endDateCalendar.setValue(null);
+            // disabling delete button
+            deleteEventButton.setDisable(true);
+        }
     }
 
     private void deleteReservation(Event event, RoomReservationRow reservation) {
@@ -262,7 +300,7 @@ public class EventManagerController {
         Parent root = null;
         try {
             root = FXMLLoader.load(getClass().getClassLoader().getResource("fxml/newevent.fxml"));
-            Scene scene = new Scene(root, 470, 360);
+            Scene scene = new Scene(root, 460, 360);
             Stage stage = new Stage();
             stage.setTitle("Spotlight - New Event");
             stage.setScene(scene);

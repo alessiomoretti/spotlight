@@ -5,6 +5,8 @@ import it.uniroma2.ispw.spotlight.database.EventDAO;
 import it.uniroma2.ispw.spotlight.database.ReservationDAO;
 import it.uniroma2.ispw.spotlight.database.RoomDAO;
 import it.uniroma2.ispw.spotlight.entities.Event;
+import it.uniroma2.ispw.spotlight.entities.Room.Reservation;
+import it.uniroma2.ispw.spotlight.entities.Room.Room;
 import it.uniroma2.ispw.spotlight.exceptions.*;
 import it.uniroma2.ispw.spotlight.services.ServiceManager;
 
@@ -47,9 +49,18 @@ public class EventManagementService extends DataAccessService<Event> {
         }
     }
 
-    public void deleteEvent(Event event) throws AuthRequiredException, EventServiceException {
+    public void deleteEvent(Event event) throws AuthRequiredException, EventServiceException, ReservationServiceException, RoomServiceException {
         if (hasCapability(getCurrentUser())) {
-            // updating event
+            // deleting all reservations
+            for (Room room : event.getReservedRooms()) {
+                for (Reservation reservation : room.getReservations()) {
+                    if (reservation.getEventID().equals(event.getEventID())) {
+                        room.delReservation(reservation);
+                        getReservationDAO().delete(reservation);
+                    }
+                }
+            }
+            // deleting event
             ((EventDAO) getDatabaseInterface()).delete(event);
         } else {
             throw new AuthRequiredException("This user has no privileges to access this service");
