@@ -11,4 +11,12 @@ public class AlertHelper {
         alert.setContentText(errorDetails);
         alert.show();
     }
+
+    public static void DisplayConfirmationAlert(String infoMessage, String infoDetails) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("SUCCESS");
+        alert.setHeaderText(infoMessage);
+        alert.setContentText(infoDetails);
+        alert.show();
+    }
 }
