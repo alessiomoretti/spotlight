@@ -8,6 +8,7 @@ import it.uniroma2.ispw.spotlight.exceptions.RoomServiceException;
 import it.uniroma2.ispw.spotlight.database.RoomDAO;
 import it.uniroma2.ispw.spotlight.exceptions.ReservationServiceException;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class RoomLookupService extends DataAccessService<Room> {
@@ -50,6 +51,15 @@ public class RoomLookupService extends DataAccessService<Room> {
         if (hasCapability(getCurrentUser())) {
             RoomDAO roomDAO = (RoomDAO) getDatabaseInterface();
             return roomDAO.getRoomsByReferral(getCurrentUser().getUsername());
+        } else {
+            throw new AuthRequiredException("This user has no privileges to access this service");
+        }
+    }
+
+    public ArrayList<String> getAllRoomDepartments() throws AuthRequiredException, RoomServiceException {
+        if (hasCapability(getCurrentUser())) {
+            RoomDAO roomDAO = (RoomDAO) getDatabaseInterface();
+            return roomDAO.getDepartments();
         } else {
             throw new AuthRequiredException("This user has no privileges to access this service");
         }

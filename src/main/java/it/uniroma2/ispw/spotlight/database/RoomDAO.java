@@ -80,8 +80,7 @@ public class RoomDAO extends DAO<Room>{
 
     public ArrayList<Room> getRoomsByProperties(RoomProperties properties) throws RoomServiceException, ReservationServiceException {
         // preparing sql
-        String sql = "SELECT * FROM rooms WHERE capacity >= ? AND projector = ? AND whiteboard = ? AND int_whiteboard = ?" +
-                     "AND videocall_capable = ? AND microphone = ?";
+        String sql = "SELECT * FROM rooms WHERE capacity >= ?";
 
         // retrieving results filtered by room properties
         try {
@@ -93,11 +92,6 @@ public class RoomDAO extends DAO<Room>{
             // preparing statement
             PreparedStatement pstm = db.prepareStatement(sql, TYPE_SCROLL_INSENSITIVE, NO_GENERATED_KEYS);
             pstm.setInt(1, properties.getCapacity());
-            pstm.setInt(2, properties.hasProjector() ? 1 : 0);
-            pstm.setInt(3, properties.hasWhiteboard() ? 1 : 0);
-            pstm.setInt(4, properties.hasInteractiveWhiteboard() ? 1 : 0);
-            pstm.setInt(5, properties.isVideocallCapable() ? 1 : 0);
-            pstm.setInt(6, properties.hasMicrophone() ? 1 : 0);
 
 
             ResultSet results = pstm.executeQuery();
@@ -106,10 +100,12 @@ public class RoomDAO extends DAO<Room>{
             results.first();
             while (true) {
                 Room room = createRoomFromResultSet(results);
-                // adding reservations
-                for (Reservation reservation : reservationDAO.getReservationsByRoomID(room.getRoomID()))
-                    room.addReservation(reservation);
-                rooms.add(room);
+                if (verifyProperties(room.getProperties(), properties)) {
+                    // adding reservations
+                    for (Reservation reservation : reservationDAO.getReservationsByRoomID(room.getRoomID()))
+                        room.addReservation(reservation);
+                    rooms.add(room);
+                }
 
                 if (!results.next()) break;
             }
@@ -123,8 +119,7 @@ public class RoomDAO extends DAO<Room>{
 
     public ArrayList<Room> getRoomsByPropertiesAndDepartment(RoomProperties properties, String department) throws RoomServiceException, ReservationServiceException {
         // preparing sql
-        String sql = "SELECT * FROM rooms WHERE capacity >= ? AND projector = ? AND whiteboard = ? AND int_whiteboard = ?" +
-                "AND videocall_capable = ? AND microphone = ? AND department = ?";
+        String sql = "SELECT * FROM rooms WHERE capacity >= ? AND department = ?";
 
         // retrieving results filtered by room properties
         try {
@@ -136,12 +131,7 @@ public class RoomDAO extends DAO<Room>{
             // preparing statement
             PreparedStatement pstm = db.prepareStatement(sql, TYPE_SCROLL_INSENSITIVE, NO_GENERATED_KEYS);
             pstm.setInt(1, properties.getCapacity());
-            pstm.setInt(2, properties.hasProjector() ? 1 : 0);
-            pstm.setInt(3, properties.hasWhiteboard() ? 1 : 0);
-            pstm.setInt(4, properties.hasInteractiveWhiteboard() ? 1 : 0);
-            pstm.setInt(5, properties.isVideocallCapable() ? 1 : 0);
-            pstm.setInt(6, properties.hasMicrophone() ? 1 : 0);
-            pstm.setString(7, department);
+            pstm.setString(2, department);
 
             ResultSet results = pstm.executeQuery();
             if (!results.isBeforeFirst()) return rooms;
@@ -149,11 +139,12 @@ public class RoomDAO extends DAO<Room>{
             results.first();
             while (true) {
                 Room room = createRoomFromResultSet(results);
-                // adding reservations
-                for (Reservation reservation : reservationDAO.getReservationsByRoomID(room.getRoomID()))
-                    room.addReservation(reservation);
-                rooms.add(room);
-
+                if (verifyProperties(room.getProperties(), properties)) {
+                    // adding reservations
+                    for (Reservation reservation : reservationDAO.getReservationsByRoomID(room.getRoomID()))
+                        room.addReservation(reservation);
+                    rooms.add(room);
+                }
                 if (!results.next()) break;
             }
 
@@ -271,5 +262,19 @@ public class RoomDAO extends DAO<Room>{
                         results.getString("name"),
                         results.getString("department"),
                         roomProperties);
+    }
+
+    private boolean verifyProperties(RoomProperties retrieved, RoomProperties requested) {
+        if (requested.hasProjector())
+            if (!retrieved.hasProjector()) return false;
+        if (requested.hasMicrophone())
+            if (!retrieved.hasMicrophone()) return false;
+        if (requested.hasInteractiveWhiteboard())
+            if (!retrieved.hasInteractiveWhiteboard()) return false;
+        if (requested.hasWhiteboard())
+            if (!retrieved.hasWhiteboard()) return false;
+        if (requested.isVideocallCapable())
+            if (!retrieved.isVideocallCapable()) return false;
+        return true;
     }
 }
