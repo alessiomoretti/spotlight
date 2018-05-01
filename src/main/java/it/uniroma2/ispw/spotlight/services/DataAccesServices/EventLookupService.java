@@ -21,12 +21,11 @@ public class EventLookupService extends DataAccessService<Event> {
         if (hasCapability(getCurrentUser())) {
             // retrieving all the events containing the given name
             ArrayList<Event> retrievedEvents = ((EventDAO) getDatabaseInterface()).getEventsByName(eventName);
-
             // initializing result array
             ArrayList<Event> events = new ArrayList<>();
             // iterating over retrieved events to select the ones present or future
             for (Event event : retrievedEvents) {
-                if(event.getStartDateTime().getTime() <= start.getTime() && event.getEndDateTime().getTime() >= start.getTime())
+                if(event.getStartDateTime().getTime() <= start.getTime() || event.getEndDateTime().getTime() >= start.getTime())
                     events.add(event);
             }
             return events;

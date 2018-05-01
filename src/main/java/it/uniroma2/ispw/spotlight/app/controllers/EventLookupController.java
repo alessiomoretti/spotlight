@@ -143,13 +143,23 @@ public class EventLookupController {
     }
 
     private void searchByNameAndDate() {
+        if (eventDatePicker.getValue() == null) {
+            AlertHelper.DisplayErrorAlert("Error on input parameters", "Insert a valid date");
+            return;
+        }
+
         // retrieving date and verifying if present or future date - system default date zone
         Date eventDate = Date.from(Instant.from(eventDatePicker.getValue().atStartOfDay(ZoneId.systemDefault())));
         if (eventDate.getTime() < CalendarHelper.getToday().getTime()) {
             AlertHelper.DisplayErrorAlert("Error on input parameters", "Date must be valid, present or future");
-        } if (searchTextField.getText().length() == 0){
+        }
+
+        // check on text field
+        if (searchTextField.getText().length() == 0){
             AlertHelper.DisplayErrorAlert("Error on input parameters", "Event search text must be not empty");
-        } else {
+        }
+
+        else {
             try {
                 // retrieving event lookup service
                 EventLookupService eventLookupService = ServiceManager.getInstance().getEventLookupService();
