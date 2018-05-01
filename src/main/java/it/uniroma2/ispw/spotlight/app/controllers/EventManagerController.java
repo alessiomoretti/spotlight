@@ -6,6 +6,7 @@ import it.uniroma2.ispw.spotlight.entities.Room.Room;
 import it.uniroma2.ispw.spotlight.exceptions.*;
 import it.uniroma2.ispw.spotlight.helpers.CalendarHelper;
 import it.uniroma2.ispw.spotlight.services.DataAccesServices.EventManagementService;
+import it.uniroma2.ispw.spotlight.services.DataAccesServices.RoomManagementService;
 import it.uniroma2.ispw.spotlight.services.DataAccesServices.UserEventLookupService;
 import it.uniroma2.ispw.spotlight.services.ServiceManager;
 import javafx.collections.FXCollections;
@@ -133,7 +134,7 @@ public class EventManagerController {
             @Override
             public void handle(ActionEvent event) {
                 if (selectedReservationRow != null && selectedEvent != null)
-                    deleteReservation(selectedEvent, selectedReservationRow);
+                    deleteReservation(selectedReservationRow);
             }
         });
         // NEW RESERVATION
@@ -253,7 +254,8 @@ public class EventManagerController {
                         dfDay.format(reservation.getStartDateTime()),
                         dfHour.format(reservation.getStartDateTime()),
                         dfDay.format(reservation.getEndDateTime()),
-                        dfHour.format(reservation.getEndDateTime())
+                        dfHour.format(reservation.getEndDateTime()),
+                        reservation
                 ));
             }
         }
@@ -329,7 +331,7 @@ public class EventManagerController {
             // retrieving service
             EventManagementService eventManagementService = ServiceManager.getInstance().getEventManagementService();
             // deleting event after user confirmation
-            Alert alert = AlertHelper.DisplayConfirmationAlert("Are you sure you want to delete the event " + event.getEventID() + "?");
+            Alert alert = AlertHelper.DisplayConfirmationAlert("Do you want to delete the event " + event.getEventID() + "?");
             if (alert.getResult() == ButtonType.OK) {
                 eventManagementService.deleteEvent(event);
             }
@@ -355,8 +357,27 @@ public class EventManagerController {
         }
     }
 
-    private void deleteReservation(Event event, RoomReservationRow reservation) {
+    private void deleteReservation(RoomReservationRow reservationRow) {
+        try {
+            // retrieving service
+            RoomManagementService roomManagementService = ServiceManager.getInstance().getRoomManagementService();
 
+            // deleting the reservation after user confirmation
+            Alert alert = AlertHelper.DisplayConfirmationAlert("Do you want to delete the selected reservation?");
+            if (alert.getResult() == ButtonType.OK)
+                roomManagementService.deleteRoomReservation(reservationRow.getOriginalReservation());
+
+            // refreshing view
+            populateEventsTable();
+            populateReservationsTable(selectedEvent);
+
+        } catch (AuthRequiredException e) {
+            AlertHelper.DisplayErrorAlert("User authentication failed", "");
+            e.printStackTrace();
+        } catch (ReservationServiceException e) {
+            AlertHelper.DisplayErrorAlert("Error occured deleting the reservation", "");
+            e.printStackTrace();
+        }
     }
 
     private void openNewEventScene() {
@@ -389,7 +410,7 @@ public class EventManagerController {
             NewReservationController newEventController = fxmlLoader.<NewReservationController>getController();
             newEventController.setEventManagerController(this);
 
-            Scene scene = new Scene(root, 450, 360);
+            Scene scene = new Scene(root, 460, 360);
             Stage stage = new Stage();
             stage.setTitle("Spotlight - New Reservation");
             stage.setScene(scene);
@@ -414,8 +435,9 @@ public class EventManagerController {
         private String endTime;
         private String endDay;
         private String endHour;
+        private Reservation originalReservation;
 
-        public RoomReservationRow(String reservation, String roomID, String department, String startDay, String startHour, String endDay, String endHour) {
+        public RoomReservationRow(String reservation, String roomID, String department, String startDay, String startHour, String endDay, String endHour, Reservation originalReservation) {
             this.reservation = reservation;
             this.roomID = roomID;
             this.department = department;
@@ -425,6 +447,7 @@ public class EventManagerController {
             this.endDay = endDay;
             this.endHour = endHour;
             this.endTime = endDay + " " + endHour;
+            this.originalReservation = originalReservation;
         }
 
         public String getReservation() {
@@ -457,6 +480,10 @@ public class EventManagerController {
 
         public String getEndHour() {
             return endHour;
+        }
+
+        public Reservation getOriginalReservation() {
+            return originalReservation;
         }
     }
 }

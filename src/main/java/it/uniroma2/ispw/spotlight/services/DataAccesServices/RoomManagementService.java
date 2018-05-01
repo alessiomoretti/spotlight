@@ -93,6 +93,19 @@ public class RoomManagementService extends DataAccessService<Room> {
         }
     }
 
+    public void deleteRoomReservation(Reservation reservation) throws AuthRequiredException, ReservationServiceException {
+        if (!hasCapability(getCurrentUser()))
+            throw new AuthRequiredException("This user has no privileges to access this service");
+
+        try {
+            getReservationDAO().delete(reservation);
+        } catch (ReservationServiceException e) {
+            e.printStackTrace();
+            throw new ReservationServiceException("Exception caught deleting reservation " + reservation.getReservationID());
+        }
+
+    }
+
     public void setAdminPrivileges(boolean privileges) { this.adminPrivileges = privileges; }
 
     public ReservationDAO getReservationDAO() { return this.reservationDAO; }

@@ -23,7 +23,7 @@
       <CheckBox fx:id="videocallCheckbox" layoutX="151.0" layoutY="110.0" mnemonicParsing="false" style="-fx-opacity: 1" text="Interactive Whiteboard" />
       <CheckBox fx:id="intWhiteboardCheckbox" layoutX="151.0" layoutY="79.0" mnemonicParsing="false" style="-fx-opacity: 1" text="Projector" />
       <CheckBox fx:id="adminPrivilegeCheckBox" layoutX="23.0" layoutY="308.0" mnemonicParsing="false" text="Overwrite a previous reservation" />
-      <ChoiceBox fx:id="endMinuteChoiceBox" layoutX="402.0" layoutY="224.0" prefHeight="27.0" prefWidth="42.0" />
+      <ChoiceBox fx:id="endMinuteChoiceBox" layoutX="403.0" layoutY="224.0" prefHeight="27.0" prefWidth="42.0" />
       <ChoiceBox fx:id="startMinuteChoiceBox" layoutX="402.0" layoutY="179.0" prefHeight="27.0" prefWidth="42.0" />
       <Label layoutX="277.0" layoutY="183.0" text="Start hour:" />
       <ChoiceBox fx:id="startHourChoiceBox" layoutX="353.0" layoutY="179.0" prefHeight="27.0" prefWidth="42.0" />
