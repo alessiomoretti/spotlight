@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="357.0" prefWidth="464.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.uniroma2.ispw.spotlight.app.controllers.NewReservationController">
+   <children>
+      <TextField fx:id="roomCapacityTextField" layoutX="90.0" layoutY="24.0" prefHeight="27.0" prefWidth="81.0">
+         <font>
+            <Font size="12.0" />
+         </font>
+      </TextField>
+      <ChoiceBox fx:id="roomDeptChoiceBox" layoutX="267.0" layoutY="75.0" prefHeight="27.0" prefWidth="165.0" />
+      <Button fx:id="newReservationButton" layoutX="289.0" layoutY="303.0" mnemonicParsing="false" style="-fx-background-color: #686a6b;" text="NEW RESERVATION" textFill="WHITE" />
+      <Label layoutX="23.0" layoutY="28.0" text="Capacity:" />
+      <CheckBox fx:id="microphoneCheckbox" layoutX="23.0" layoutY="79.0" mnemonicParsing="false" style="-fx-opacity: 1" text="Microphone" />
+      <CheckBox fx:id="projectorCheckbox" layoutX="23.0" layoutY="112.0" mnemonicParsing="false" style="-fx-opacity: 1" text="Whiteboard" />
+      <CheckBox fx:id="whiteboardCheckbox" layoutX="336.0" layoutY="112.0" mnemonicParsing="false" style="-fx-opacity: 1" text="Whiteboard" />
+      <CheckBox fx:id="videocallCheckbox" layoutX="151.0" layoutY="110.0" mnemonicParsing="false" style="-fx-opacity: 1" text="Interactive Whiteboard" />
+      <CheckBox fx:id="intWhiteboardCheckbox" layoutX="151.0" layoutY="79.0" mnemonicParsing="false" style="-fx-opacity: 1" text="Projector" />
+      <CheckBox fx:id="adminPrivilegeCheckBox" layoutX="23.0" layoutY="308.0" mnemonicParsing="false" text="Overwrite a previous reservation" />
+      <ChoiceBox fx:id="endMinuteChoiceBox" layoutX="403.0" layoutY="224.0" prefHeight="27.0" prefWidth="42.0" />
+      <ChoiceBox fx:id="startMinuteChoiceBox" layoutX="402.0" layoutY="179.0" prefHeight="27.0" prefWidth="42.0" />
+      <Label layoutX="277.0" layoutY="183.0" text="Start hour:" />
+      <ChoiceBox fx:id="startHourChoiceBox" layoutX="353.0" layoutY="179.0" prefHeight="27.0" prefWidth="42.0" />
+      <ChoiceBox fx:id="endHourChoiceBox" layoutX="354.0" layoutY="224.0" prefHeight="27.0" prefWidth="42.0" />
+      <Label layoutX="285.0" layoutY="228.0" text="End hour:" />
+      <Label layoutX="25.0" layoutY="227.0" text="End day:" />
+      <Label layoutX="21.0" layoutY="182.0" text="Start day:" />
+      <DatePicker fx:id="startDatePicker" layoutX="93.0" layoutY="178.0" prefHeight="27.0" prefWidth="165.0" />
+      <DatePicker fx:id="endDatePicker" layoutX="93.0" layoutY="223.0" prefHeight="27.0" prefWidth="165.0" />
+   </children>
+</AnchorPane>
