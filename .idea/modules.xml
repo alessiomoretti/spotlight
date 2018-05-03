@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/SpotlightApp/SpotlightApp.iml" filepath="$PROJECT_DIR$/SpotlightApp/SpotlightApp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SpotlightCore/SpotlightCore.iml" filepath="$PROJECT_DIR$/SpotlightCore/SpotlightCore.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SpotlightWeb/SpotlightWeb.iml" filepath="$PROJECT_DIR$/SpotlightWeb/SpotlightWeb.iml" />
+    </modules>
+  </component>
+</project>
