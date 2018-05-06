@@ -6,6 +6,14 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <jsp:useBean id="loginBean" scope="session" class="spotlightweb.LoginBean"/>
+<%
+    if (loginBean.getCurrentUser() == null) {
+        %>
+        <jsp:forward page="index.jsp"/>
+        <%
+    }
+%>
+
 <jsp:useBean id="eventLookupBean" scope="session" class="spotlightweb.EventLookupBean" />
 <jsp:setProperty name="eventLookupBean" property="*"/>
 

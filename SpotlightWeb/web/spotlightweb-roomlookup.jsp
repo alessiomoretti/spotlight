@@ -8,7 +8,13 @@
 
 <jsp:useBean id="loginBean" scope="session" class="spotlightweb.LoginBean"/>
 <jsp:useBean id="roomLookupBean" scope="session" class="spotlightweb.RoomLookupBean"/>
-
+<%
+    if (loginBean.getCurrentUser() == null) {
+        %>
+        <jsp:forward page="index.jsp"/>
+        <%
+    }
+%>
 <%
     // setting room lookup bean current user
     roomLookupBean.setCurrentUser(loginBean.getCurrentUser());
