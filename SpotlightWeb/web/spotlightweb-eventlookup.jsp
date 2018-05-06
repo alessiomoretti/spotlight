@@ -64,7 +64,7 @@
         <a class="nav-link active" href="#">Events Lookup</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="#">Event Manager</a>
+        <a class="nav-link" href="spotlightweb-eventmanager.jsp">Event Manager</a>
     </li>
     <li class="nav-item">
         <a class="nav-link" href="spotlightweb-roomlookup.jsp">Rooms Lookup</a>

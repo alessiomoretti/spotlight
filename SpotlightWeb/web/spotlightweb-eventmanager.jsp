@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<jsp:useBean id="loginBean" scope="session" class="spotlightweb.LoginBean"/>
 
 <!DOCTYPE html>
 <html>
@@ -25,10 +26,10 @@
         <a class="nav-link" href="spotlightweb-roomlookup.jsp">Rooms Lookup</a>
     </li>
 </ul>
-<div class="container" style="padding-top: 20pt">
+<div class="container" style="padding-top: 5pt">
     <div class="row">
         <div class="col-10">
-            <p>Events created by: <strong>-</strong></p>
+            <p>Events created by: <strong><%out.print(loginBean.getCurrentUser().getUsername());%></strong></p>
         </div>
         <div class="col-2">
             <button id="btnNewEvent" class="btn btn-primary btn-sm" style="float:right" onclick="$('#newEventModal').show();">
