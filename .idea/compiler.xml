@@ -6,14 +6,17 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="Spotlight" />
         <module name="SpotlightApp" />
         <module name="SpotlightCore" />
+        <module name="SpotlightWeb" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="8">
-      <module name="Spotlight" target="1.5" />
+      <module name="Spotlight" target="8" />
       <module name="SpotlightApp" target="8" />
       <module name="SpotlightCore" target="8" />
+      <module name="SpotlightWeb" target="8" />
     </bytecodeTargetLevel>
   </component>
 </project>
