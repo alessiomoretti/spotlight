@@ -67,7 +67,7 @@
         <a class="nav-link" href="#">Event Manager</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="#">Rooms Lookup</a>
+        <a class="nav-link" href="spotlightweb-roomlookup.jsp">Rooms Lookup</a>
     </li>
 </ul>
 
@@ -193,7 +193,7 @@
     }
 
     function populateReservedRooms(eventID) {
-        $('#reservationsTable tbody').html("")
+        $('#reservationsTable tbody').html("");
 
         // populating selected event name
         var eventName = eventID.split("-")[0];
@@ -201,7 +201,7 @@
 
         // populating table
         reservationsJSON[eventID].forEach(function(reservation) {
-            var tr = "<tr><td>"+reservation["roomName"]+"</td><td>"+reservation["reservationStart"]+"</td><td>"+reservation["reservationStart"]+"</td></tr>";
+            var tr = "<tr><td>"+reservation["roomName"]+"</td><td>"+reservation["reservationStart"]+"</td><td>"+reservation["reservationEnd"]+"</td></tr>";
             $('#reservationsTable tbody').append(tr);
         })
     }

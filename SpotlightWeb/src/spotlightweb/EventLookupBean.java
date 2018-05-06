@@ -95,6 +95,8 @@ public class EventLookupBean {
     }
 
     public static String getEventRoomsJSON(ArrayList<Event> events) {
+        // returning the rooms JSON in order to manipulate the UI on client side
+
         SimpleDateFormat dfDay = new SimpleDateFormat("MMM dd, HH:mm");
 
         JSONObject reservationsJSON = new JSONObject();
