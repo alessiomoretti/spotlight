@@ -46,8 +46,7 @@
 
     <link rel="stylesheet" href="css/bootstrap.css" type="text/css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.0-alpha14/css/tempusdominus-bootstrap-4.min.css" />
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css">
-
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.12/css/all.css" type="text/css">
 </head>
 <body>
 
