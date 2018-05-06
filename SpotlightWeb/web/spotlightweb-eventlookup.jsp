@@ -22,27 +22,27 @@
             events = eventLookupBean.searchUserEvents();
         else
             events = eventLookupBean.searchEvents();
+    }
 
-        if (events == null) {
-            // error message
-            %>
-            <div class="modal" id="errorModal" tabindex="-1" role="dialog">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Error</h5>
-                        </div>
-                        <div class="modal-body">
-                            <p><jsp:getProperty name="eventLookupBean" property="errorMessage"/></p>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" id="modalClose" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        </div>
+    if (events == null) {
+        // error message
+        %>
+        <div class="modal" id="errorModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Error</h5>
+                    </div>
+                    <div class="modal-body">
+                        <p><jsp:getProperty name="eventLookupBean" property="errorMessage"/></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="modalClose" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>
-            <%
-        }
+        </div>
+        <%
     }
 %>
 
@@ -131,7 +131,7 @@
                                     <td><% out.print(event.getReferralName()); %></td>
                                     <td><% out.print(event.getStartDateTime().toString());%></td>
                                     <td><% out.print(event.getEndDateTime().toString()); %></td>
-                                    <td><i class="fa fa-info-circle" id="<% out.print(event.getEventID()); %>" onclick="populateReservedRooms(id)"></i></td>
+                                    <td><i class="fa fa-info-circle" id="<% out.print(event.getEventID() + "%" + event.getEventName()); %>" onclick="populateReservedRooms(id)"></i></td>
                                 </tr>
                             <%
                         }
@@ -192,11 +192,12 @@
 
     }
 
-    function populateReservedRooms(eventID) {
+    function populateReservedRooms(ID) {
         $('#reservationsTable tbody').html("");
 
         // populating selected event name
-        var eventName = eventID.split("-")[0];
+        var eventID   = ID.split("%")[0];
+        var eventName = ID.split("%")[1];
         $('#selectedEvent').html(eventName);
 
         // populating table
