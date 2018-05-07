@@ -13,6 +13,12 @@
         %>
         <jsp:forward page="index.jsp"/>
         <%
+    } else {
+        if (loginBean.getCurrentUser().getRole() < Constants.TEACHER_ROLE) {
+            %>
+            <jsp:forward page="index.jsp"/>
+            <%
+        }
     }
 %>
 <%
