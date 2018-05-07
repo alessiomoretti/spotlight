@@ -107,7 +107,9 @@ public class EventLookupBean {
                 for (Reservation reservation : room.getReservations()) {
                     if (reservation.getEventID().equals(event.getEventID())) {
                         JSONObject jsonDoc = new JSONObject();
+                        jsonDoc.put("reservationID", reservation.getReservationID());
                         jsonDoc.put("roomName", room.getRoomName());
+                        jsonDoc.put("roomDepartment", room.getRoomDepartment());
                         jsonDoc.put("reservationStart", dfDay.format(reservation.getStartDateTime()));
                         jsonDoc.put("reservationEnd", dfDay.format(reservation.getEndDateTime()));
                         reservations.add(jsonDoc);

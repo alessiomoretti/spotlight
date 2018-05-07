@@ -1,3 +1,7 @@
+<%@ page import="it.uniroma2.ispw.spotlight.entities.Event" %>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="it.uniroma2.ispw.spotlight.Constants" %>
+<%@ page import="spotlightweb.EventLookupBean" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <jsp:useBean id="loginBean" scope="session" class="spotlightweb.LoginBean"/>
 
@@ -6,8 +10,40 @@
         %>
         <jsp:forward page="index.jsp"/>
         <%
+    } else {
+        if (loginBean.getCurrentUser().getRole() < Constants.TEACHER_ROLE) {
+            %>
+            <jsp:forward page="index.jsp"/>
+            <%
+        }
     }
 %>
+
+<jsp:useBean id="eventLookupBean" scope="session" class="spotlightweb.EventLookupBean" />
+<%
+    ArrayList<Event> events = eventLookupBean.searchUserEvents();
+    if (events == null) {
+        // error message
+        %>
+        <div class="modal" id="errorModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Error</h5>
+                    </div>
+                    <div class="modal-body">
+                        <p><jsp:getProperty name="eventLookupBean" property="errorMessage"/></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="modalClose" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <%
+    }
+%>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -50,12 +86,33 @@
             <table class="table table-sm table-hover">
                 <thead class="thead-dark">
                 <tr>
-                    <th scope="col">Room</th>
-                    <th scope="col">Department</th>
-                    <th scope="col"></th>
+                    <th scope="col" style="width: 25%">Event name</th>
+                    <th scope="col" style="width: 20%">Referral</th>
+                    <th scope="col" style="width: 20%">Mailing list</th>
+                    <th scope="col" style="width: 12.5%">Start date</th>
+                    <th scope="col" style="width: 12.5%">End date</th>
+                    <th scope="col" style="width: 5%">Reservations</th>
+                    <th scope="col" style="width: 5%"></th>
                 </tr>
                 </thead>
                 <tbody style="height: 220px; overflow-y: auto">
+                <%
+                    if (events != null) {
+                        for (Event event : events) {
+                            %>
+                            <tr>
+                                <td style="width: 25%"><% out.print(event.getEventName()); %></td>
+                                <td style="width: 20%"><% out.print(event.getReferralName()); %></td>
+                                <td style="width: 20%"><% out.print(event.getEmailDL()); %></td>
+                                <td style="width: 12.5%"><% out.print(event.getStartDateTime().toString());%></td>
+                                <td style="width: 12.5%"><% out.print(event.getEndDateTime().toString()); %></td>
+                                <td style="width: 5%"><% out.print(String.valueOf(event.getReservedRooms().size())); %></td>
+                                <td style="width: 5%"><i class="fa fa-info-circle" id="<% out.print(event.getEventID() + "%" + event.getEventName() + "%" + event.getEmailDL() + "%" + String.valueOf(event.getStartDateTime().getTime()) + "%" + String.valueOf(event.getEndDateTime().getTime())); %>" onclick="populateEventDetails(id)"></i></td>
+                            </tr>
+                            <%
+                        }
+                    }
+                %>
                 </tbody>
             </table>
         </div>
@@ -66,15 +123,15 @@
                 <div class="card-body">
                     <div class="input-group input-group-sm mb-3">
                         <div class="input-group-prepend">
-                            <span class="input-group-text" id="eventNameUpdate">Event name</span>
+                            <span class="input-group-text" >Event name</span>
                         </div>
-                        <input type="text" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
+                        <input type="text" id="eventNameUpdate" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
                     </div>
                     <div class="input-group input-group-sm mb-3">
                         <div class="input-group-prepend">
-                            <span class="input-group-text" id="eventMailUpdate">Event email</span>
+                            <span class="input-group-text" >Event email</span>
                         </div>
-                        <input type="text" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
+                        <input type="text" id="eventMailUpdate" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
                     </div>
                     <div class="row">
                         <div class="col-6">
@@ -97,11 +154,16 @@
                         </div>
                     </div>
                     <div class="row" style="padding-top: 30px">
-                        <div class="col-4"></div>
                         <div class="col-5">
                             <button id="addReservationBtn" class="btn btn-outline-info btn-sm" onclick="$('#addReservationModal').show();">
                                 ADD RESERVATION
                                 <i class="fa fa-bookmark"></i>
+                            </button>
+                        </div>
+                        <div class="col-4">
+                            <button id="deleteEventBtn" class="btn btn-outline-danger btn-sm">
+                                DELETE EVENT
+                                <i class="fa fa-trash-alt"></i>
                             </button>
                         </div>
                         <div class="col-3">
@@ -116,13 +178,14 @@
         </div>
         <div class="col-6">
             <div class="card">
-                <table class="table table-sm table-hover">
+                <table class="table table-sm table-hover" id="reservationsTable">
                     <thead class="thead-light">
                     <tr>
                         <th scope="col">Room</th>
                         <th scope="col">Department</th>
                         <th scope="col">Start time</th>
                         <th scope="col">End time</th>
+                        <th scope="col" style="width: 5%"></th>
                     </tr>
                     </thead>
                     <tbody style="height: 200px; overflow-y: auto">
@@ -279,6 +342,59 @@
         $('#datetimepicker4').datetimepicker();
         $('#datetimepicker5').datetimepicker();
     });
+
+    // disabling event buttons
+    $('#addReservationBtn').hide();
+    $('#updateEventBtn').hide();
+    $('#deleteEventBtn').hide();
+
+
+</script>
+<script>
+    let reservationsJSON = <% if (events != null) out.print(EventLookupBean.getEventRoomsJSON(events));
+                              else out.print("{}");
+                           %>;
+</script>
+<script>
+
+    var selectedEventID = null;
+    var selectedEventName = null;
+
+    function populateEventDetails(ID) {
+        $('#reservationsTable tbody').html("");
+
+        // populating selected event name
+        let eventID   = ID.split("%")[0];
+        let eventName = ID.split("%")[1];
+        let eventMail = ID.split("%")[2];
+        $('#selectedEvent').html(eventName);
+
+        // selected event
+        selectedEventID   = eventID;
+        selectedEventName = eventName;
+
+        // populating table
+        reservationsJSON[eventID].forEach(function(reservation) {
+            var tr = "<tr><td>"+reservation["roomName"]+"</td><td>"+reservation["roomDepartment"]+"</td><td>"+reservation["reservationStart"]+"</td><td>"+reservation["reservationEnd"]+"</td><td style='width:5%'><i class='fa fa-trash-alt' id='"+reservation["reservationID"]+"'/></td></tr>";
+            $('#reservationsTable tbody').append(tr);
+        });
+
+        // enabling event buttons
+        $('#addReservationBtn').show();
+        $('#updateEventBtn').show();
+        $('#deleteEventBtn').show();
+
+        // retrieving event dates
+        let eS = new Date(parseInt(ID.split("%")[3]));
+        let eE = new Date(parseInt(ID.split("%")[4]));
+
+        // populating event details
+        $('#eventNameUpdate').val(eventName);
+        $('#eventMailUpdate').val(eventMail);
+        $('#startTimeUpdateText').val(eS.toLocaleString("en-US"));
+        $('#endTimeUpdateText').val(eE.toLocaleString("en-US"));
+    }
+
 </script>
 </body>
 </html>
