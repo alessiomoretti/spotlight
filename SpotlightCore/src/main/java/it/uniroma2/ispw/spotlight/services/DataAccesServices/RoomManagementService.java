@@ -36,15 +36,16 @@ public class RoomManagementService extends DataAccessService<Room> {
         if (!hasCapability(getCurrentUser()))
             throw new AuthRequiredException("This user has no privileges to access this service");
 
-        // retrieving all rooms with the desired properties
         if (getRoomLookup() == null)
             this.roomLookup = ServiceManager.getInstance().getRoomLookupService();
+
+        // retrieving all rooms with the desired properties
         ArrayList<Room> allRooms = getRoomLookup().findRoomByProperties(properties, department);
 
         // check if a room is available in the desired timespan
         for (Room room : allRooms) {
             // build reservation ID
-            String reservationID = getCurrentUser().getUsername() + "-" + eventID + "-" + (new Timestamp(System.currentTimeMillis())).toString();
+            String reservationID = getCurrentUser().getUsername() + "-" + eventID + "-" + String.valueOf(Instant.now().getEpochSecond());
             // if no reservation or a timeslot is available
             if (room.getReservations().size() == 0 || getReservationDAO().checkReservationsByRoomIDAndTimeslot(room.getRoomID(),
                                                                                                                new Timestamp(startDateTime.getTime()),
@@ -111,4 +112,7 @@ public class RoomManagementService extends DataAccessService<Room> {
     public ReservationDAO getReservationDAO() { return this.reservationDAO; }
 
     public RoomLookupService getRoomLookup() { return this.roomLookup; }
+
+    public void setRoomLookup() { this.roomLookup = new RoomLookupService(); }
+
 }

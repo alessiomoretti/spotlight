@@ -3,7 +3,10 @@
 <%@ page import="it.uniroma2.ispw.spotlight.Constants" %>
 <%@ page import="spotlightweb.EventLookupBean" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+
 <jsp:useBean id="loginBean" scope="session" class="spotlightweb.LoginBean"/>
+<jsp:useBean id="eventLookupBean" scope="session" class="spotlightweb.EventLookupBean" />
+<jsp:useBean id="roomLookupBean" class="spotlightweb.RoomLookupBean" scope="session" />
 
 <%
     if (loginBean.getCurrentUser() == null) {
@@ -19,10 +22,11 @@
 
         // adding user to request context
         request.getSession().setAttribute("currentUser", loginBean.getCurrentUser());
+        // adding user to roomlookup
+        roomLookupBean.setCurrentUser(loginBean.getCurrentUser());
     }
 %>
 
-<jsp:useBean id="eventLookupBean" scope="session" class="spotlightweb.EventLookupBean" />
 <%
     ArrayList<Event> events = eventLookupBean.searchUserEvents();
     if (events == null) {
@@ -94,7 +98,7 @@
                     <th scope="col" style="width: 20%">Mailing list</th>
                     <th scope="col" style="width: 12.5%">Start date</th>
                     <th scope="col" style="width: 12.5%">End date</th>
-                    <th scope="col" style="width: 5%">Reservations</th>
+                    <th scope="col" style="width: 5%">Reserved rooms</th>
                     <th scope="col" style="width: 5%"></th>
                 </tr>
                 </thead>
@@ -245,6 +249,10 @@
                     </div>
                 </div>
             </div>
+            <div class="alert alert-danger" role="alert" style="padding-top: 10px" id="alertErrorEvent" hidden>
+            </div>
+            <div class="alert alert-success" role="alert" style="padding-top: 10px" id="alertSuccessEvent" hidden>
+            </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-secondary btn-sm" onclick="$('#newEventModal').hide();">CANCEL</button>
                 <button type="button" class="btn btn-primary btn-sm">CREATE EVENT</button>
@@ -263,11 +271,26 @@
             <div class="modal-body">
                 <div class="input-group input-group-sm mb-3">
                     <div class="input-group-prepend">
-                        <span class="input-group-text" id="reservationCapacity">Room capacity</span>
+                        <span class="input-group-text" id="resCapacity">Room capacity</span>
                     </div>
-                    <input type="number" id="replyNumber" min="0" data-bind="value:replyNumber" />
+                    <input type="number" id="reservationCapacity" min="0" data-bind="value:replyNumber" />
                 </div>
-                <div class="form-check">
+                <div class="form-group">
+                    <label for="departmentSelect">Select department</label>
+                    <select class="form-control" id="departmentSelect">
+                        <%
+                            ArrayList<String> departments = roomLookupBean.getDepartments();
+                            if (departments != null) {
+                                for (String dept : departments) {
+                                    %>
+                                        <option><% out.print(dept); %></option>
+                                    <%
+                                }
+                            }
+                        %>
+                    </select>
+                </div>
+                <div class="form-check" style="padding-top: 10px">
                     <input class="form-check-input" type="checkbox" value="" id="microphoneCheck">
                     <label class="form-check-label" for="microphoneCheck">
                         Microphone
@@ -291,9 +314,15 @@
                         Interactive whiteboard
                     </label>
                 </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="videocallCheck">
+                    <label class="form-check-label" for="videocallCheck">
+                        Videocall capable
+                    </label>
+                </div>
                 <div class="row" style="padding-top: 15px">
                     <div class="col-6">
-                        <div class="label" style="font-size: small">Event start at:</div>
+                        <div class="label" style="font-size: small">Reservation start at:</div>
                         <div class="input-group date" id="datetimepicker4" data-target-input="nearest">
                             <input type="text" id="startTimeReservationText" class="form-control datetimepicker-input" data-target="#datetimepicker4" required="required" style="font-size: small"/>
                             <div class="input-group-append" data-target="#datetimepicker4" data-toggle="datetimepicker">
@@ -302,7 +331,7 @@
                         </div>
                     </div>
                     <div class="col-6">
-                        <div class="label" style="font-size: small">Event end at:</div>
+                        <div class="label" style="font-size: small">Reservation end at:</div>
                         <div class="input-group date" id="datetimepicker5" data-target-input="nearest">
                             <input type="text" id="endTimeReservationText"class="form-control datetimepicker-input" data-target="#datetimepicker5" required="required" style="font-size: small"/>
                             <div class="input-group-append" data-target="#datetimepicker5" data-toggle="datetimepicker">
@@ -311,17 +340,28 @@
                         </div>
                     </div>
                 </div>
+                <div class="form-check" style="padding-top: 5px">
+                    <input class="form-check-input" type="checkbox" value="" id="adminPrivileges">
+                    <label class="form-check-label" for="adminPrivileges">
+                        Administrative privileges (force room reservation)
+                    </label>
+                </div>
+                <div class="alert alert-danger" role="alert" style="padding-top: 10px" id="alertErrorReservation" hidden>
+                </div>
+                <div class="alert alert-success" role="alert" style="padding-top: 10px" id="alertSuccessReservation" hidden>
+                </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="$('#addReservationModal').hide();">CANCEL</button>
-                <button type="button" class="btn btn-primary btn-sm">ADD RESERVATION</button>
+                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="$('#addReservationModal').hide(); if (addedReservation) location.reload(); ">CANCEL</button>
+                <button type="button" class="btn btn-primary btn-sm" onclick="addReservation();">ADD RESERVATION</button>
             </div>
         </div>
     </div>
 </div>
 
 <script src="js/bootstrap.min.js"></script>
-<script   src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="js/eventmanagement.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script src="js/moment.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.0-alpha14/js/tempusdominus-bootstrap-4.min.js"></script>
 <script type="text/javascript">
@@ -357,47 +397,6 @@
     let reservationsJSON = <% if (events != null) out.print(EventLookupBean.getEventRoomsJSON(events));
                               else out.print("{}");
                            %>;
-</script>
-<script>
-
-    var selectedEventID = null;
-    var selectedEventName = null;
-
-    function populateEventDetails(ID) {
-        $('#reservationsTable tbody').html("");
-
-        // populating selected event name
-        let eventID   = ID.split("%")[0];
-        let eventName = ID.split("%")[1];
-        let eventMail = ID.split("%")[2];
-        $('#selectedEvent').html(eventName);
-
-        // selected event
-        selectedEventID   = eventID;
-        selectedEventName = eventName;
-
-        // populating table
-        reservationsJSON[eventID].forEach(function(reservation) {
-            var tr = "<tr><td>"+reservation["roomName"]+"</td><td>"+reservation["roomDepartment"]+"</td><td>"+reservation["reservationStart"]+"</td><td>"+reservation["reservationEnd"]+"</td><td style='width:5%'><i class='fa fa-trash-alt' id='"+reservation["reservationID"]+"'/></td></tr>";
-            $('#reservationsTable tbody').append(tr);
-        });
-
-        // enabling event buttons
-        $('#addReservationBtn').show();
-        $('#updateEventBtn').show();
-        $('#deleteEventBtn').show();
-
-        // retrieving event dates
-        let eS = new Date(parseInt(ID.split("%")[3]));
-        let eE = new Date(parseInt(ID.split("%")[4]));
-
-        // populating event details
-        $('#eventNameUpdate').val(eventName);
-        $('#eventMailUpdate').val(eventMail);
-        $('#startTimeUpdateText').val(eS.toLocaleString("en-US"));
-        $('#endTimeUpdateText').val(eE.toLocaleString("en-US"));
-    }
-
 </script>
 </body>
 </html>

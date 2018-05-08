@@ -90,5 +90,20 @@ public class RoomLookupBean {
         return reservationsJSON.toString();
     }
 
+    public ArrayList<String> getDepartments() {
+        // retrieving departments
+        try {
+            return roomLookupService.getAllRoomDepartments();
+        } catch (AuthRequiredException e) {
+            e.printStackTrace();
+            this.errorMessage = "Error occured retrieving user authentication";
+            return null;
+        } catch (RoomServiceException e) {
+            e.printStackTrace();
+            this.errorMessage = "Error occured retrieving room departments";
+            return null;
+        }
+    }
+
     public String getErrorMessage() { return this.errorMessage; }
 }

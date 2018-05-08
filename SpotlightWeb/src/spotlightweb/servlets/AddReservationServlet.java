@@ -10,8 +10,6 @@ import it.uniroma2.ispw.spotlight.services.DataAccesServices.RoomManagementServi
 import it.uniroma2.ispw.spotlight.users.User;
 import org.json.JSONObject;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -41,7 +39,10 @@ public class AddReservationServlet extends HttpServlet {
 
         // retrieving user from request session
         User user =  (User) request.getSession().getAttribute(CURRENT_USER);
+        // preparing services
         roomManagementService.setCurrentUser(user);
+        roomManagementService.setRoomLookup();
+        roomManagementService.getRoomLookup().setCurrentUser(user);
 
         // check if valid request and session
         if (request.getParameter(ADD_RESERVATION) == null && user == null &&
