@@ -16,6 +16,9 @@
             <jsp:forward page="index.jsp"/>
             <%
         }
+
+        // adding user to request context
+        request.getSession().setAttribute("currentUser", loginBean.getCurrentUser());
     }
 %>
 
