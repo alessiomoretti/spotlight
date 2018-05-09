@@ -56,7 +56,7 @@ public class DeleteServlet extends HttpServlet {
         }
         // DELETING RESERVATION
         if (request.getParameter(RESERVATION_DELETE) != null) {
-            deleteEvent(user, request.getParameter(RESERVATION_ID), responseJSON);
+            deleteReservation(user, request.getParameter(RESERVATION_ID), responseJSON);
         }
 
         // writing result
