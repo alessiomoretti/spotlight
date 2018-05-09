@@ -214,7 +214,7 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text" id="eventReferralCreate">@</span>
                     </div>
-                    <input type="text" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" disabled>
+                    <input type="text" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" disabled value="<% out.print(loginBean.getCurrentUser().getName()); %>">
                 </div>
                 <div class="input-group input-group-sm mb-3">
                     <div class="input-group-prepend">

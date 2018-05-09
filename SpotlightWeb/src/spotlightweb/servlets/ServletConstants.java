@@ -1,6 +1,6 @@
 package spotlightweb.servlets;
 
-public class ServletHelper {
+public class ServletConstants {
 
     public static final String CURRENT_USER                     = "currentUser";
 
@@ -11,11 +11,21 @@ public class ServletHelper {
     public static final String SUCCESS                          = "success";
     public static final String FAILURE                          = "failure";
 
+    public static final String RESERVATION_ID                   = "reservation_id";
+
     public static final String EVENT_ID                         = "event_id";
+    public static final String EVENT_NAME                       = "event_name";
+    public static final String EVENT_MAIL                       = "event_mail";
+
     public static final String START_TIMESTAMP                  = "start_timestamp";
     public static final String END_TIMESTAMP                    = "end_timestamp";
 
     public static final String ADD_RESERVATION                  = "add_reservation";
+    public static final String EVENT_CREATE                     = "create_event";
+    public static final String EVENT_UPDATE                     = "update_event";
+    public static final String EVENT_DELETE                     = "delete_event";
+    public static final String RESERVATION_DELETE               = "delete_reservation";
+
     public static final String RESERVATION_CAPACITY             = "capacity";
     public static final String RESERVATION_HAS_MICROPHONE       = "has_microphone";
     public static final String RESERVATION_HAS_PROJECTOR        = "has_projector";
