@@ -168,13 +168,13 @@
                             </button>
                         </div>
                         <div class="col-4">
-                            <button id="deleteEventBtn" class="btn btn-outline-danger btn-sm">
+                            <button id="deleteEventBtn" class="btn btn-outline-danger btn-sm" onclick="deleteEvent(); if (deletedEvent) location.reload();">
                                 DELETE EVENT
                                 <i class="fa fa-trash-alt"></i>
                             </button>
                         </div>
                         <div class="col-3">
-                            <button id="updateEventBtn" class="btn btn-outline-primary btn-sm" style="float:right">
+                            <button id="updateEventBtn" class="btn btn-outline-primary btn-sm" style="float:right" onclick="updateEvent(); if (updatedEvent) location.reload();">
                                 UPDATE EVENT
                                 <i class="fa fa-save"></i>
                             </button>
@@ -212,21 +212,21 @@
             <div class="modal-body">
                 <div class="input-group input-group-sm mb-3">
                     <div class="input-group-prepend">
-                        <span class="input-group-text" id="eventReferralCreate">@</span>
+                        <span class="input-group-text">@</span>
                     </div>
-                    <input type="text" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" disabled value="<% out.print(loginBean.getCurrentUser().getName()); %>">
+                    <input id="eventReferralCreate" type="text" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" disabled value="<% out.print(loginBean.getCurrentUser().getName()); %>">
                 </div>
                 <div class="input-group input-group-sm mb-3">
                     <div class="input-group-prepend">
-                        <span class="input-group-text" id="eventNameCreate">Event name</span>
+                        <span class="input-group-text" >Event name</span>
                     </div>
-                    <input type="text" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
+                    <input id="eventNameCreate" type="text" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
                 </div>
                 <div class="input-group input-group-sm mb-3">
                     <div class="input-group-prepend">
-                        <span class="input-group-text" id="eventMailCreate">Event email</span>
+                        <span class="input-group-text" >Event email</span>
                     </div>
-                    <input type="text" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
+                    <input id="eventMailCreate" type="text" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
                 </div>
                 <div class="row">
                     <div class="col-6">
@@ -254,8 +254,8 @@
             <div class="alert alert-success" role="alert" style="padding-top: 10px" id="alertSuccessEvent" hidden>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="$('#newEventModal').hide();">CANCEL</button>
-                <button type="button" class="btn btn-primary btn-sm">CREATE EVENT</button>
+                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="$('#newEventModal').hide(); if (createdEvent) location.reload();">CANCEL</button>
+                <button type="button" class="btn btn-primary btn-sm" onclick="createEvent()">CREATE EVENT</button>
             </div>
         </div>
     </div>
