@@ -9,8 +9,40 @@
         <servlet-class>spotlightweb.servlets.AddReservationServlet</servlet-class>
     </servlet>
 
+    <servlet>
+        <servlet-name>CreateEvent</servlet-name>
+        <servlet-class>spotlightweb.servlets.CreateEventServlet</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>UpdateEvent</servlet-name>
+        <servlet-class>spotlightweb.servlets.UpdateEventServlet</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>DeleteItem</servlet-name>
+        <servlet-class>spotlightweb.servlets.DeleteServlet</servlet-class>
+    </servlet>
+
+
     <servlet-mapping>
         <servlet-name>AddReservation</servlet-name>
         <url-pattern>/AddReservationServlet</url-pattern>
     </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>CreateEvent</servlet-name>
+        <url-pattern>/CreateEvent</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>UpdateEvent</servlet-name>
+        <url-pattern>/UpdateEvent</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>DeleteItem</servlet-name>
+        <url-pattern>/DeleteItem</url-pattern>
+    </servlet-mapping>
+
 </web-app>
