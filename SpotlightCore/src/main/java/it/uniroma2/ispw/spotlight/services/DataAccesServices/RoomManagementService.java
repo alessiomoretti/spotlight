@@ -104,7 +104,19 @@ public class RoomManagementService extends DataAccessService<Room> {
             e.printStackTrace();
             throw new ReservationServiceException("Exception caught deleting reservation " + reservation.getReservationID());
         }
+    }
 
+    public void deleteRoomReservationByID(String reservationID) throws AuthRequiredException, ReservationServiceException {
+        if (!hasCapability(getCurrentUser()))
+            throw new AuthRequiredException("This user has no privileges to access this service");
+
+        try {
+            Reservation reservation = getReservationDAO().getReservationsByReservationID(reservationID);
+            getReservationDAO().delete(reservation);
+        } catch (ReservationServiceException e) {
+            e.printStackTrace();
+            throw new ReservationServiceException("Exception caught deleting reservation " + reservationID);
+        }
     }
 
     public void setAdminPrivileges(boolean privileges) { this.adminPrivileges = privileges; }
@@ -113,6 +125,6 @@ public class RoomManagementService extends DataAccessService<Room> {
 
     public RoomLookupService getRoomLookup() { return this.roomLookup; }
 
-    public void setRoomLookup() { this.roomLookup = new RoomLookupService(); }
+    public void setRoomLookup(RoomLookupService roomLookupService) { this.roomLookup = roomLookupService; }
 
 }

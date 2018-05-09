@@ -34,6 +34,27 @@ public class ReservationDAO extends DAO<Reservation> {
         }
     }
 
+    public Reservation getReservationsByReservationID(String reservationID) throws ReservationServiceException {
+        // preparing query to retrieve all the reservations (present or future) related to a given event
+        String sql = "SELECT * FROM reservations WHERE resID=?";
+
+        // retrieving reservations
+        try {
+            // retrieving database connection
+            Connection db = getConnection();
+
+            // preparing statement
+            PreparedStatement pstm = db.prepareStatement(sql, TYPE_SCROLL_INSENSITIVE, NO_GENERATED_KEYS);
+            pstm.setString(1, reservationID);
+
+            ResultSet results = pstm.executeQuery();
+            return getReservationsFromResultSet(results).get(0); // assuming only one reservation is returned for consistency
+        } catch (ClassNotFoundException | SQLException se) {
+            se.printStackTrace();
+            throw new ReservationServiceException("Exception caught retrieving reservation " + reservationID);
+        }
+    }
+
     public ArrayList<Reservation> getReservationsByEventID(String eventID, Timestamp timestamp) throws ReservationServiceException {
         // preparing query to retrieve all the reservations (present or future) related to a given event
         String sql = "SELECT * FROM reservations WHERE eventID=? AND start_timestamp  >= ?";
