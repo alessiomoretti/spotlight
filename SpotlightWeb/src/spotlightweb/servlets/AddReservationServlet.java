@@ -6,6 +6,7 @@ import it.uniroma2.ispw.spotlight.entities.Room.RoomProperties;
 import it.uniroma2.ispw.spotlight.exceptions.AuthRequiredException;
 import it.uniroma2.ispw.spotlight.exceptions.ReservationServiceException;
 import it.uniroma2.ispw.spotlight.exceptions.RoomServiceException;
+import it.uniroma2.ispw.spotlight.services.DataAccesServices.RoomLookupService;
 import it.uniroma2.ispw.spotlight.services.DataAccesServices.RoomManagementService;
 import it.uniroma2.ispw.spotlight.users.User;
 import org.json.JSONObject;
@@ -18,7 +19,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Date;
 
-import static spotlightweb.servlets.ServletHelper.*;
+import static spotlightweb.servlets.ServletConstants.*;
 
 public class AddReservationServlet extends HttpServlet {
 
@@ -39,15 +40,11 @@ public class AddReservationServlet extends HttpServlet {
 
         // retrieving user from request session
         User user =  (User) request.getSession().getAttribute(CURRENT_USER);
-        // preparing services
-        roomManagementService.setCurrentUser(user);
-        roomManagementService.setRoomLookup();
-        roomManagementService.getRoomLookup().setCurrentUser(user);
 
         // check if valid request and session
-        if (request.getParameter(ADD_RESERVATION) == null && user == null &&
-            request.getParameter(RESERVATION_DEPARTMENT) == null && request.getParameter(EVENT_ID) == null &&
-            request.getParameter(START_TIMESTAMP) != null && request.getParameter(END_TIMESTAMP) != null) {
+        if (request.getParameter(ADD_RESERVATION) == null || user == null ||
+            request.getParameter(RESERVATION_DEPARTMENT) == null || request.getParameter(EVENT_ID) == null ||
+            request.getParameter(START_TIMESTAMP) == null || request.getParameter(END_TIMESTAMP) == null) {
             responseJSON.put(RESPONSE_STATUS, FAILURE);
             responseJSON.put(RESPONSE_ERROR_MESSAGE, "Forbbiden: invalid user authentication and method invocation");
             out.println(responseJSON.toString());
@@ -84,13 +81,19 @@ public class AddReservationServlet extends HttpServlet {
         Date endDateTime = new Date(Long.valueOf(request.getParameter(END_TIMESTAMP)));
 
         // RESERVATION
-        reserveRoom(request.getParameter(EVENT_ID), roomProperties, roomDepartment, startDateTime, endDateTime, responseJSON);
+        reserveRoom(user, request.getParameter(EVENT_ID), roomProperties, roomDepartment, startDateTime, endDateTime, responseJSON);
         // writing result
         out.println(responseJSON.toString());
 
     }
 
-    private void reserveRoom(String eventID, RoomProperties properties, String department, Date startDate, Date endDate, JSONObject responseJSON) {
+    private synchronized void reserveRoom(User user, String eventID, RoomProperties properties, String department, Date startDate, Date endDate, JSONObject responseJSON) {
+        // preparing services
+        roomManagementService.setCurrentUser(user);
+        RoomLookupService roomLookupService = new RoomLookupService();
+        roomLookupService.setCurrentUser(user);
+        roomManagementService.setRoomLookup(roomLookupService);
+
         try {
             // performing actual reservation
             Reservation reservation =  roomManagementService.reserveRoom(eventID, properties, department, startDate, endDate);
