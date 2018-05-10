@@ -40,23 +40,36 @@ public class DeleteServlet extends HttpServlet {
         // retrieving user from request session
         User user =  (User) request.getSession().getAttribute(CURRENT_USER);
 
-        // check if valid request and session
-        if (!(request.getParameter(EVENT_DELETE) != null && request.getParameter(EVENT_ID) != null) ||
-            ! (request.getParameter(RESERVATION_DELETE) != null && request.getParameter(RESERVATION_ID) != null)
-            || user == null) {
+        if (user == null) {
             responseJSON.put(RESPONSE_STATUS, FAILURE);
-            responseJSON.put(RESPONSE_ERROR_MESSAGE, "Forbbiden: invalid user authentication and method invocation");
+            responseJSON.put(RESPONSE_ERROR_MESSAGE, "Forbidden: invalid user authentication");
             out.println(responseJSON.toString());
             return;
         }
 
-        // DELETING EVENT
+        // check if valid request and session
         if (request.getParameter(EVENT_DELETE) != null) {
-            deleteEvent(user, request.getParameter(EVENT_ID), responseJSON);
+            if (request.getParameter(EVENT_ID) == null) {
+                responseJSON.put(RESPONSE_STATUS, FAILURE);
+                responseJSON.put(RESPONSE_ERROR_MESSAGE, "Forbbiden event delete operation: invalid method invocation");
+                out.println(responseJSON.toString());
+                return;
+            } else {
+                // DELETING EVENT
+                deleteEvent(user, request.getParameter(EVENT_ID), responseJSON);
+            }
         }
-        // DELETING RESERVATION
+
         if (request.getParameter(RESERVATION_DELETE) != null) {
-            deleteReservation(user, request.getParameter(RESERVATION_ID), responseJSON);
+            if (request.getParameter(RESERVATION_ID) == null) {
+                responseJSON.put(RESPONSE_STATUS, FAILURE);
+                responseJSON.put(RESPONSE_ERROR_MESSAGE, "Forbbiden reservation delete operation: invalid method invocation");
+                out.println(responseJSON.toString());
+                return;
+            } else {
+                // DELETING RESERVATION
+                deleteReservation(user, request.getParameter(RESERVATION_ID), responseJSON);
+            }
         }
 
         // writing result
