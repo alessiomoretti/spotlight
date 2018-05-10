@@ -98,7 +98,7 @@
                     <th scope="col" style="width: 20%">Mailing list</th>
                     <th scope="col" style="width: 12.5%">Start date</th>
                     <th scope="col" style="width: 12.5%">End date</th>
-                    <th scope="col" style="width: 5%">Reserved rooms</th>
+                    <th scope="col" style="width: 5%">Rooms</th>
                     <th scope="col" style="width: 5%"></th>
                 </tr>
                 </thead>
@@ -226,7 +226,7 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text" >Event email</span>
                     </div>
-                    <input id="eventMailCreate" type="text" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
+                    <input id="eventMailCreate" type="text" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" value="<% out.print(loginBean.getCurrentUser().getEmailAddress()); %>">
                 </div>
                 <div class="row">
                     <div class="col-6">
@@ -254,8 +254,8 @@
             <div class="alert alert-success" role="alert" style="padding-top: 10px" id="alertSuccessEvent" hidden>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="$('#newEventModal').hide(); if (createdEvent) location.reload();">CANCEL</button>
-                <button type="button" class="btn btn-primary btn-sm" onclick="createEvent()">CREATE EVENT</button>
+                <button type="button" id="closeEventBtn" class="btn btn-outline-secondary btn-sm" onclick="$('#newEventModal').hide(); if (createdEvent) location.reload();">CANCEL</button>
+                <button type="button" id="createEventBtn" class="btn btn-primary btn-sm" onclick="createNewEvent();">CREATE EVENT</button>
             </div>
         </div>
     </div>
@@ -352,8 +352,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="$('#addReservationModal').hide(); if (addedReservation) location.reload(); ">CANCEL</button>
-                <button type="button" class="btn btn-primary btn-sm" onclick="addReservation();">ADD RESERVATION</button>
+                <button type="button" id="closeReservationBtn"  class="btn btn-outline-secondary btn-sm" onclick="$('#addReservationModal').hide(); if (addedReservation) location.reload(); ">CANCEL</button>
+                <button type="button" id="newReservationBtn" class="btn btn-primary btn-sm" onclick="addReservation();">ADD RESERVATION</button>
             </div>
         </div>
     </div>

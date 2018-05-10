@@ -38,8 +38,8 @@ function populateEventDetails(ID) {
     // populating event details
     $('#eventNameUpdate').val(eventName);
     $('#eventMailUpdate').val(eventMail);
-    $('#startTimeUpdateText').val(eS.toLocaleString("en-US"));
-    $('#endTimeUpdateText').val(eE.toLocaleString("en-US"));
+    $('#startTimeUpdateText').val(eS.toLocaleString("en-US").replace(/:\d{2}\s/,' '));
+    $('#endTimeUpdateText').val(eE.toLocaleString("en-US").replace(/:\d{2}\s/,' '));
 }
 
 function addReservation() {
@@ -98,6 +98,7 @@ function addReservation() {
                 $('#alertSuccessReservation').html(result["msg"]);
                 $('#alertSuccessReservation').prop('hidden', false);
                 addedReservation = true;
+                $('#newReservationBtn').attr("disabled", "disabled");
                 return;
             } else {
                 $('#alertErrorReservation').html(result["error"]);
@@ -113,7 +114,7 @@ function addReservation() {
     });
 }
 
-function createEvent() {
+function createNewEvent() {
     $('#alertErrorEvent').prop('hidden', true);
     $('#alertSuccessEvent').prop('hidden', true);
 
@@ -159,6 +160,7 @@ function createEvent() {
                 $('#alertSuccessEvent').html(result["msg"]);
                 $('#alertSuccessEvent').prop('hidden', false);
                 createdEvent = true;
+                $('#createEventBtn').attr("disabled", "disabled");
                 return;
             } else {
                 $('#alertErrorEvent').html(result["error"]);
@@ -186,8 +188,8 @@ function updateEvent() {
         alert("Dates must be set");
         return;
     }
-    var startMillis = $('#datetimepicker').data("datetimepicker").date().toDate().getTime();
-    var endMillis = $('#datetimepicker1').data("datetimepicker").date().toDate().getTime();
+    var startMillis = $('#datetimepicker').data("datetimepicker").viewDate().toDate().getTime();
+    var endMillis = $('#datetimepicker1').data("datetimepicker").viewDate().toDate().getTime();
     if (startMillis >= endMillis) {
         alert("Start time must not be after end time");
         return;
@@ -197,8 +199,8 @@ function updateEvent() {
     var postData = {
         "update_event" : true,
         "event_id"     : selectedEventID,
-        "event_name"   : $('#eventNameCreate').val(),
-        "event_mail"   : $('#eventMailCreate').val(),
+        "event_name"   : $('#eventNameUpdate').val(),
+        "event_mail"   : $('#eventMailUpdate').val(),
         "start_timestamp": String(startMillis),
         "end_timestamp"  : String(endMillis)
     };
@@ -215,6 +217,7 @@ function updateEvent() {
                 if (result["status"] === "success") {
                     alert(result["msg"]);
                     updatedEvent = true;
+                    location.reload();
                     return;
                 } else {
                     alert(result["error"]);
@@ -248,6 +251,7 @@ function deleteEvent() {
                 if (result["status"] === "success") {
                     alert(result["msg"]);
                     deletedEvent = true;
+                    location.reload();
                     return;
                 } else {
                     alert(result["error"]);
@@ -270,7 +274,7 @@ function deleteReservation(resID) {
     };
 
     // ask for user confirmation to delete the event
-    if (confirm("Are you sure you want to delete this event?")) {
+    if (confirm("Are you sure you want to delete this reservation?")) {
         $.ajax({
             url: "/DeleteItem",
             type: "POST",
@@ -281,6 +285,7 @@ function deleteReservation(resID) {
                 if (result["status"] === "success") {
                     alert(result["msg"]);
                     deletedReservation = true;
+                    location.reload();
                     return;
                 } else {
                     alert(result["error"]);
