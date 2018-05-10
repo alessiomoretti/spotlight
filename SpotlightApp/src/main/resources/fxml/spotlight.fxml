@@ -4,19 +4,19 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<TabPane fx:id="spotlightTabPane" fx:controller="it.uniroma2.ispw.spotlightapp.controllers.SpotlightController" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
   <tabs>
-    <Tab text="Events lookup">
+    <Tab fx:id="eventLookupTab" text="Events lookup">
       <content>
           <fx:include fx:id="eventLookupTabPage" source="eventlookup.fxml"/>
       </content>
     </Tab>
-      <Tab text="Manage events">
+      <Tab fx:id="eventManagerTab"  text="Manage events">
         <content>
           <fx:include fx:id="eventManagerTabPage" source="eventmanager.fxml"/>
         </content>
       </Tab>
-    <Tab text="Rooms browser">
+    <Tab fx:id="roomLookupTab"  text="Rooms browser">
       <content>
         <fx:include fx:id="roomLookupTabPage" source="roomlookup.fxml"/>
       </content>
