@@ -8,6 +8,7 @@ import it.uniroma2.ispw.spotlight.entities.Event;
 import it.uniroma2.ispw.spotlight.entities.Room.Reservation;
 import it.uniroma2.ispw.spotlight.entities.Room.Room;
 import it.uniroma2.ispw.spotlight.exceptions.*;
+import it.uniroma2.ispw.spotlight.helpers.MD5Helper;
 import it.uniroma2.ispw.spotlight.services.ServiceManager;
 
 import java.time.Instant;
@@ -29,7 +30,7 @@ public class EventManagementService extends DataAccessService<Event> {
     public Event createNewEvent(String eventName, Date startT, Date endT) throws EventServiceException, AuthRequiredException {
         if (hasCapability(getCurrentUser())) {
             // generating eventID
-            String newEventID = eventName + "-" + getCurrentUser().getUsername() + "-" + String.valueOf(Instant.now().getEpochSecond());
+            String newEventID = MD5Helper.getHashedString(eventName + "-" + getCurrentUser().getUsername() + "-" + String.valueOf(Instant.now().getEpochSecond()));
             // generating new event
             Event event = new Event(newEventID, eventName, startT, endT, getCurrentUser(), getCurrentUser().getEmailAddress());
             // inserting event into DB

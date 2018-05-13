@@ -13,7 +13,7 @@ public class ServiceManager {
     private RoomLookupService roomLookupService;
     private RoomManagementService roomManagementService;
 
-    private static ServiceManager serviceManager = new ServiceManager();
+    private static ServiceManager serviceManager;
 
     public LoginService getLoginService() {
         if (this.loginService == null)
@@ -63,7 +63,8 @@ public class ServiceManager {
     }
 
     public static ServiceManager getInstance() {
+        if (serviceManager == null)
+            serviceManager = new ServiceManager();
         return serviceManager;
     }
-
 }

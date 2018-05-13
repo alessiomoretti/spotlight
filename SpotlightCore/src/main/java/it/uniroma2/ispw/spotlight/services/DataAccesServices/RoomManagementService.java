@@ -9,6 +9,8 @@ import it.uniroma2.ispw.spotlight.exceptions.RoomServiceException;
 import it.uniroma2.ispw.spotlight.database.ReservationDAO;
 import it.uniroma2.ispw.spotlight.database.RoomDAO;
 import it.uniroma2.ispw.spotlight.exceptions.ReservationServiceException;
+import it.uniroma2.ispw.spotlight.helpers.MD5Helper;
+import it.uniroma2.ispw.spotlight.services.Emailer;
 import it.uniroma2.ispw.spotlight.services.ServiceManager;
 
 import javax.xml.ws.Service;
@@ -45,7 +47,7 @@ public class RoomManagementService extends DataAccessService<Room> {
         // check if a room is available in the desired timespan
         for (Room room : allRooms) {
             // build reservation ID
-            String reservationID = getCurrentUser().getUsername() + "-" + eventID + "-" + String.valueOf(Instant.now().getEpochSecond());
+            String reservationID = MD5Helper.getHashedString(getCurrentUser().getUsername() + "-" + eventID + "-" + String.valueOf(Instant.now().getEpochSecond()));
             // if no reservation or a timeslot is available
             if (room.getReservations().size() == 0 || getReservationDAO().checkReservationsByRoomIDAndTimeslot(room.getRoomID(),
                                                                                                                new Timestamp(startDateTime.getTime()),
@@ -57,6 +59,11 @@ public class RoomManagementService extends DataAccessService<Room> {
                 room.addReservation(newReservation);
                 // update room and return success
                 ((RoomDAO) getDatabaseInterface()).update(room);
+
+                // send confirmation mail
+                Emailer.sendConfirmationMail(getCurrentUser().getEmailAddress(),
+                                      "reserving room (" + newReservation.getStartDateTime().toString() + " - " + newReservation.getEndDateTime().toString() + ")",
+                                             room.getRoomName());
                 return newReservation;
             }
         }
@@ -76,8 +83,13 @@ public class RoomManagementService extends DataAccessService<Room> {
             for (Reservation conflict : conflicts) {
                 room.delReservation(conflict);
                 getReservationDAO().delete(conflict);
+
+                // sending cancellation mail to previous referral
+                Emailer.sendCancellationMail(getCurrentUser().getEmailAddress(),
+                                    "reservation (" + conflict.getStartDateTime().toString() + " - " + conflict.getStartDateTime().toString() + ") of ",
+                                             conflict.getRoomID(),
+                                      "for admnistrative purposes.");
             }
-            // TODO Emailer
 
             // build reservation ID
             String reservationID = getCurrentUser().getUsername() + "-" + eventID + "-" + (new Timestamp(System.currentTimeMillis())).toString();

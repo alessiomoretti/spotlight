@@ -2,6 +2,8 @@ package spotlightweb.servlets;
 
 public class ServletConstants {
 
+    public static final String SESSION_SERVICE_MANAGER          = "serviceManager";
+
     public static final String CURRENT_USER                     = "currentUser";
 
     public static final String RESPONSE_STATUS                  = "status";

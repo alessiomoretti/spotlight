@@ -4,6 +4,7 @@ import it.uniroma2.ispw.spotlight.exceptions.AuthServiceException;
 import it.uniroma2.ispw.spotlight.helpers.MD5Helper;
 import it.uniroma2.ispw.spotlight.services.LoginService;
 import it.uniroma2.ispw.spotlight.services.ServiceManager;
+import it.uniroma2.ispw.spotlightapp.controllers.helpers.StageHelper;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -42,12 +43,17 @@ public class LoginController {
                     loginErrorText.setVisible(true);
                 else {
                     // changing scene to main app
-                    Stage stage = (Stage) loginUsername.getScene().getWindow();
+                    Stage stage = new Stage();
                     Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("fxml/spotlight.fxml"));
                     Scene scene = new Scene(root, 1000, 600);
-                    it.uniroma2.ispw.spotlightapp.controllers.helpers.StageHelper.centerStage(stage, 1000, 600);
+                    StageHelper.centerStage(stage, 1000, 600);
                     stage.setTitle("Spotlight - App");
                     stage.setScene(scene);
+                    stage.show();
+
+                    // closing current stage
+                    Stage currentStage = (Stage) loginUsername.getScene().getWindow();
+                    currentStage.close();
                 }
             } catch(AuthServiceException e) {
                 e.printStackTrace();

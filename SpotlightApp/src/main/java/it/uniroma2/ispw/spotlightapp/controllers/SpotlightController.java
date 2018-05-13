@@ -18,6 +18,7 @@ public class SpotlightController {
             if (ServiceManager.getInstance().getLoginService().getCurrentUser().getRole() < Constants.TEACHER_ROLE) {
                 eventManagerTab.setDisable(true);
                 roomLookupTab.setDisable(true);
+                System.out.println("OK");
             }
         } catch (AuthRequiredException e) {
             e.printStackTrace();
