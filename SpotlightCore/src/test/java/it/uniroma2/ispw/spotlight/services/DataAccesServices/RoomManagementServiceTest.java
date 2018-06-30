@@ -6,6 +6,7 @@ import it.uniroma2.ispw.spotlight.entities.Room.RoomProperties;
 import it.uniroma2.ispw.spotlight.exceptions.AuthRequiredException;
 import it.uniroma2.ispw.spotlight.exceptions.ReservationServiceException;
 import it.uniroma2.ispw.spotlight.exceptions.RoomServiceException;
+import it.uniroma2.ispw.spotlight.services.ServiceManager;
 import it.uniroma2.ispw.spotlight.users.AdministrativeStaffMember;
 import it.uniroma2.ispw.spotlight.users.Teacher;
 import org.junit.jupiter.api.Assertions;
@@ -20,12 +21,13 @@ class RoomManagementServiceTest {
     private Teacher testUserT = new Teacher("johndoe", "John", "Doe", "john.doe@uni.com", "History");
     private AdministrativeStaffMember testUserA = new AdministrativeStaffMember("jennyseed", "Jenny", "Seed", "jenny.seed@uni.com");
     private RoomProperties roomProperties = new RoomProperties(150, true, true,true, true,true);
-    private String testEventID = "testevent - johndoe - 1524317641";
+    private String testEventID = "Test event-johndoe-1526209188";
 
     @Test
     void reserveRoom() throws RoomServiceException, ReservationServiceException, AuthRequiredException {
         // add user - TEACHER
         roomManagementService.setCurrentUser(testUserT);
+        roomManagementService.setRoomLookup(new RoomLookupService());
         roomManagementService.getRoomLookup().setCurrentUser(testUserT);
 
         // setting start and end datetime
@@ -58,6 +60,9 @@ class RoomManagementServiceTest {
         ArrayList<Reservation> reservations = roomManagementService.getReservationDAO().getReservationsByEventID(testEventID);
         Assertions.assertEquals(reservations.size(), 1);
         Assertions.assertEquals(reservations.get(0).getReferral(), testUserA.getUsername());
+
+        // removing the reservation
+        roomManagementService.deleteRoomReservation(r);
     }
 
 }

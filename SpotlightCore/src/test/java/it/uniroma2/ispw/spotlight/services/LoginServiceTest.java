@@ -14,7 +14,7 @@ class LoginServiceTest {
     private LoginService loginService;
     private String testUsername = "johndoe";
     private String testPassword = "d763ec748433fb79a04f82bd46133d55";
-    private String name    = "Doe John, History";
+    private String name         = "Doe John, History";
     private String email        = "john.doe@uni.com";
     private Integer role        = TEACHER_ROLE;
     private String department   = "History";

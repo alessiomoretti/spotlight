@@ -21,37 +21,34 @@ class EventManagementServiceTest {
 
 
     @Test
-    void createNewEvent() throws EventServiceException, AuthRequiredException {
+    void createAndUpdateEvent() throws EventServiceException, AuthRequiredException, RoomServiceException, ReservationServiceException, UserRetrievalException {
         // add user
         eventManagementService.setCurrentUser(testUserT);
+        userEventLookupService.setCurrentUser(testUserT);
 
-        // create and store event
+        // -> create and store event
         Event event = eventManagementService.createNewEvent(eventName, start_date, end_date);
+
         Assertions.assertEquals(event.getEventName(), eventName);
         Assertions.assertEquals(event.getReferral().getUsername(), testUserT.getUsername());
         Assertions.assertEquals(event.getStartDateTime(), start_date);
         Assertions.assertEquals(event.getEndDateTime(), end_date);
         Assertions.assertEquals(event.getEmailDL(), testUserT.getEmailAddress());
-    }
 
-    @Test
-    void updateEvent() throws UserRetrievalException, EventServiceException, AuthRequiredException, ReservationServiceException, RoomServiceException {
-        // add user
-        userEventLookupService.setCurrentUser(testUserT);
-        // add user
-        eventManagementService.setCurrentUser(testUserT);
-        // setting services
-        eventManagementService.setRoomManagementService(new RoomManagementService());
+        // retrieving created event
+        Event createdEvent = userEventLookupService.getEventByID(event.getEventID());
+        Assertions.assertEquals(createdEvent.getEventName(), event.getEventName());
 
-        // selecting event
-        Event event = userEventLookupService.getEventByID("event01-johndoe-1524341621");     // TODO parametrize
-        // updating event
+        // -> updating event
         Date updatedEndDate = CalendarHelper.getDate(22, 4,2018, 16, 0);
-        event.setEndDateTime(updatedEndDate);
-        eventManagementService.updateEvent(event);
+        createdEvent.setEndDateTime(updatedEndDate);
+        eventManagementService.updateEvent(createdEvent);
 
-        // selecting event
-        event = userEventLookupService.getEventByID("event01-johndoe-1524341621");           // TODO parametrize
-        Assertions.assertEquals(event.getEndDateTime(), updatedEndDate);
+        // -> retrieving updated event
+        Event retEvent = userEventLookupService.getEventByID(createdEvent.getEventID());
+        Assertions.assertEquals(retEvent.getEndDateTime(), createdEvent.getEndDateTime());
+
+        // -> deleting event
+        eventManagementService.deleteEvent(createdEvent);
     }
 }
