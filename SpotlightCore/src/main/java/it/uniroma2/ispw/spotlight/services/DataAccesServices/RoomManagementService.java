@@ -38,9 +38,6 @@ public class RoomManagementService extends DataAccessService<Room> {
         if (!hasCapability(getCurrentUser()))
             throw new AuthRequiredException("This user has no privileges to access this service");
 
-        if (getRoomLookup() == null)
-            this.roomLookup = ServiceManager.getInstance().getRoomLookupService();
-
         // retrieving all rooms with the desired properties
         ArrayList<Room> allRooms = getRoomLookup().findRoomByProperties(properties, department);
 
@@ -135,7 +132,11 @@ public class RoomManagementService extends DataAccessService<Room> {
 
     public ReservationDAO getReservationDAO() { return this.reservationDAO; }
 
-    public RoomLookupService getRoomLookup() { return this.roomLookup; }
+    public RoomLookupService getRoomLookup() throws AuthRequiredException {
+        if (this.roomLookup == null)
+            this.roomLookup = ServiceManager.getInstance().getRoomLookupService();
+        return this.roomLookup;
+    }
 
     public void setRoomLookup(RoomLookupService roomLookupService) { this.roomLookup = roomLookupService; }
 
