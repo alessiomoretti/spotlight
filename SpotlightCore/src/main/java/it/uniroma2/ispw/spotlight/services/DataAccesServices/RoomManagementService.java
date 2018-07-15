@@ -19,6 +19,9 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 
+/**
+ * This boundary class can be used to manage and handle Rooms and Reservations
+ */
 public class RoomManagementService extends DataAccessService<Room> {
 
     private Integer minRoleRequired = Constants.TEACHER_ROLE;
@@ -34,6 +37,18 @@ public class RoomManagementService extends DataAccessService<Room> {
         this.reservationDAO = new ReservationDAO();
     }
 
+    /**
+     * Return a Reservation if its creation is successful given its requirements
+     * @param eventID String
+     * @param properties RoomProperties
+     * @param department String
+     * @param startDateTime Date
+     * @param endDateTime Date
+     * @return Reservation
+     * @throws AuthRequiredException
+     * @throws ReservationServiceException
+     * @throws RoomServiceException
+     */
     public Reservation reserveRoom (String eventID, RoomProperties properties, String department, Date startDateTime, Date endDateTime) throws AuthRequiredException, ReservationServiceException, RoomServiceException {
         if (!hasCapability(getCurrentUser()))
             throw new AuthRequiredException("This user has no privileges to access this service");
@@ -103,6 +118,12 @@ public class RoomManagementService extends DataAccessService<Room> {
         }
     }
 
+    /**
+     * Delete the given Reservation
+     * @param reservation Reservation
+     * @throws AuthRequiredException
+     * @throws ReservationServiceException
+     */
     public void deleteRoomReservation(Reservation reservation) throws AuthRequiredException, ReservationServiceException {
         if (!hasCapability(getCurrentUser()))
             throw new AuthRequiredException("This user has no privileges to access this service");
@@ -115,6 +136,12 @@ public class RoomManagementService extends DataAccessService<Room> {
         }
     }
 
+    /**
+     * Delete the reservation associated with the given unique identifier
+     * @param reservationID String
+     * @throws AuthRequiredException
+     * @throws ReservationServiceException
+     */
     public void deleteRoomReservationByID(String reservationID) throws AuthRequiredException, ReservationServiceException {
         if (!hasCapability(getCurrentUser()))
             throw new AuthRequiredException("This user has no privileges to access this service");
@@ -128,16 +155,33 @@ public class RoomManagementService extends DataAccessService<Room> {
         }
     }
 
+    /**
+     * Set if Administrative Staff privileges must be put in place in order to handle preemption reservation
+     * @param privileges boolean
+     */
     public void setAdminPrivileges(boolean privileges) { this.adminPrivileges = privileges; }
 
+    /**
+     * Return the associated ReservationDAO
+     * @return ReservationDAO
+     */
     public ReservationDAO getReservationDAO() { return this.reservationDAO; }
 
+    /**
+     * Return the RoomLookupService boundary to delegate Room handling
+     * @return RoomLookupService
+     * @throws AuthRequiredException
+     */
     public RoomLookupService getRoomLookup() throws AuthRequiredException {
         if (this.roomLookup == null)
             this.roomLookup = ServiceManager.getInstance().getRoomLookupService();
         return this.roomLookup;
     }
 
+    /**
+     * Set the RoomLookupService boundary to delegate Room handling
+     * @param roomLookupService RoomLookupService
+     */
     public void setRoomLookup(RoomLookupService roomLookupService) { this.roomLookup = roomLookupService; }
 
 }

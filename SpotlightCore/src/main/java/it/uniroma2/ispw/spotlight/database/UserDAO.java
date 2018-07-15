@@ -13,8 +13,18 @@ import static java.sql.Statement.NO_GENERATED_KEYS;
 
 import java.sql.*;
 
+/**
+ * This DAO acts as a controller of the User objects at persistence level,
+ * handling user authentication as weel
+ */
 public class UserDAO extends DAO<User> {
 
+    /**
+     * Return the user associated to the given username
+     * @param username String
+     * @return User
+     * @throws UserRetrievalException
+     */
     public User getUserByUsername(String username) throws UserRetrievalException {
         // preparing query to retrieve the user with the given username
         String sql = "SELECT * FROM users WHERE username=?";
@@ -31,6 +41,13 @@ public class UserDAO extends DAO<User> {
         }
     }
 
+    /**
+     * Return a User (if any) associated to the username with the given password
+     * @param username String
+     * @param hashed_pwd String
+     * @return User
+     * @throws AuthServiceException
+     */
     public User authenticateUser(String username, String hashed_pwd) throws AuthServiceException {
         // preparing query to authenticate user
         String sql = "SELECT * FROM users WHERE username=? AND password=?";
@@ -49,6 +66,12 @@ public class UserDAO extends DAO<User> {
 
     }
 
+    /**
+     * Return a User given a ResultSet
+     * @param results ResultSet
+     * @return User
+     * @throws SQLException
+     */
     public static User createUserFromResultSet(ResultSet results) throws SQLException {
         // check if result set is not empty
         if (!results.first())

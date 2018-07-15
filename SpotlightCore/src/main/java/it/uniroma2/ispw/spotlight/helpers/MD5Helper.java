@@ -6,6 +6,11 @@ import java.security.*;
 
 public class MD5Helper {
 
+    /**
+     * Return the hashcode of the input string
+     * @param input String
+     * @return String
+     */
     public static String getHashedString(String input){
         try {
             byte[] bytesOfMessage = input.getBytes("UTF-8");

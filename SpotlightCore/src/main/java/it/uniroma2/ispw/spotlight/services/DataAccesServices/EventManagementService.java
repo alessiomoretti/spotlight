@@ -15,6 +15,9 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 
+/**
+ *  This boundary service can be used to handle and manage Event objects
+ */
 public class EventManagementService extends DataAccessService<Event> {
 
     private Integer minRoleRequired = Constants.TEACHER_ROLE;
@@ -27,6 +30,15 @@ public class EventManagementService extends DataAccessService<Event> {
         setDatabaseInterface(new EventDAO());
     }
 
+    /**
+     * Return a newly created Event
+     * @param eventName String
+     * @param startT Date
+     * @param endT Date
+     * @return Event
+     * @throws EventServiceException
+     * @throws AuthRequiredException
+     */
     public Event createNewEvent(String eventName, Date startT, Date endT) throws EventServiceException, AuthRequiredException {
         if (hasCapability(getCurrentUser())) {
             // generating eventID
@@ -41,6 +53,12 @@ public class EventManagementService extends DataAccessService<Event> {
         }
     }
 
+    /**
+     * Update an event given its new representation
+     * @param event Event
+     * @throws AuthRequiredException
+     * @throws EventServiceException
+     */
     public void updateEvent(Event event) throws AuthRequiredException, EventServiceException {
         if (hasCapability(getCurrentUser())) {
             // updating event
@@ -50,6 +68,14 @@ public class EventManagementService extends DataAccessService<Event> {
         }
     }
 
+    /**
+     * Delete the event with the given representation
+     * @param event Event
+     * @throws AuthRequiredException
+     * @throws EventServiceException
+     * @throws ReservationServiceException
+     * @throws RoomServiceException
+     */
     public void deleteEvent(Event event) throws AuthRequiredException, EventServiceException, ReservationServiceException, RoomServiceException {
         if (hasCapability(getCurrentUser())) {
             // deleting all reservations
@@ -67,16 +93,29 @@ public class EventManagementService extends DataAccessService<Event> {
         }
     }
 
+    /**
+     * Return the ReservationDAO associated
+     * @return ReservationDAO
+     */
     public ReservationDAO getReservationDAO() {
         return roomManagementService.getReservationDAO();
     }
 
+    /**
+     * Return the RoomDAO associated
+     * @return RoomDAO
+     * @throws AuthRequiredException
+     */
     public RoomDAO getRoomDAO() throws AuthRequiredException {
         if (this.roomManagementService == null)
             ServiceManager.getInstance().getRoomManagementService();
         return (RoomDAO) roomManagementService.getDatabaseInterface();
     }
 
+    /**
+     * Set a RoomManagementService to delegate the Room / Reservation update and delete operations
+     * @param roomManagementService RoomManagementService
+     */
     public void setRoomManagementService(RoomManagementService roomManagementService) {
         this.roomManagementService = roomManagementService;
     }

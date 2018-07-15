@@ -15,17 +15,28 @@ import java.util.ArrayList;
 import static java.sql.ResultSet.TYPE_SCROLL_INSENSITIVE;
 import static java.sql.Statement.NO_GENERATED_KEYS;
 
-
+/**
+ * This DAO acts as a controller of the Event objects at persistence level
+ */
 public class EventDAO extends DAO<Event> {
 
-    private UserDAO userDAO;
-    private RoomDAO roomDAO;
+    private UserDAO userDAO; // to access user information on event retrieval and update
+    private RoomDAO roomDAO; // to access rooms information on event retrieval and update
 
     public EventDAO() {
         this.userDAO = new UserDAO();
         this.roomDAO = new RoomDAO();
     }
 
+    /**
+     * Return an event on its unique identifier
+     * @param eventID String
+     * @return Event
+     * @throws UserRetrievalException
+     * @throws EventServiceException
+     * @throws ReservationServiceException
+     * @throws RoomServiceException
+     */
     public Event getEventById(String eventID) throws UserRetrievalException, EventServiceException, ReservationServiceException, RoomServiceException {
         // preparing query to select the event for a given id
         String sql = "SELECT * FROM events WHERE eventID=?";
@@ -46,6 +57,14 @@ public class EventDAO extends DAO<Event> {
         }
     }
 
+    /**
+     * Return the list of all the events related to a referral
+     * @param referral User
+     * @return ArrayList<Event>
+     * @throws EventServiceException
+     * @throws RoomServiceException
+     * @throws ReservationServiceException
+     */
     public ArrayList<Event> getEventsByReferral(User referral) throws EventServiceException, RoomServiceException, ReservationServiceException {
         // preparing query to select the event for a given referral
         String sql = "SELECT * FROM events WHERE referral=?";
@@ -67,6 +86,15 @@ public class EventDAO extends DAO<Event> {
         }
     }
 
+    /**
+     * Return a list of all the events whose names contain part of the specified event name
+     * @param eventName String
+     * @return ArrayList<Event>
+     * @throws UserRetrievalException
+     * @throws EventServiceException
+     * @throws ReservationServiceException
+     * @throws RoomServiceException
+     */
     public ArrayList<Event> getEventsByName(String eventName) throws UserRetrievalException, EventServiceException, ReservationServiceException, RoomServiceException {
         // preparing query to get all the events containing the name
         String sql = "SELECT * FROM events WHERE event_name LIKE ?";
@@ -88,6 +116,16 @@ public class EventDAO extends DAO<Event> {
         }
     }
 
+    /**
+     * Return a list of all the events within the given start and end timestamps
+     * @param startT Timestamp
+     * @param endT Timestamp
+     * @return ArrayList<Event>
+     * @throws UserRetrievalException
+     * @throws EventServiceException
+     * @throws ReservationServiceException
+     * @throws RoomServiceException
+     */
     public ArrayList<Event> getEventsByTime(Timestamp startT, Timestamp endT) throws UserRetrievalException, EventServiceException, ReservationServiceException, RoomServiceException {
         // preparing query to retrieve events in the given timeslot
         String sql = "SELECT * FROM events WHERE (start_timestamp, end_timestamp) overlaps (?,?)";
@@ -110,6 +148,11 @@ public class EventDAO extends DAO<Event> {
         }
     }
 
+    /**
+     * Update an event (or create a new one) given a new Event representation
+     * @param event Event
+     * @throws EventServiceException
+     */
     @Override
     public void update(Event event) throws EventServiceException {
         // preparing update query
@@ -145,6 +188,11 @@ public class EventDAO extends DAO<Event> {
 
     }
 
+    /**
+     * Delete an event
+     * @param event Event
+     * @throws EventServiceException
+     */
     @Override
     public void delete(Event event) throws EventServiceException {
         // preparing the delete query
@@ -166,6 +214,15 @@ public class EventDAO extends DAO<Event> {
         }
     }
 
+    /**
+     * Utility to return a list of Event objects from the persistence layer ResultSet
+     * @param results ResultSet
+     * @return ArrayList<Event>
+     * @throws SQLException
+     * @throws UserRetrievalException
+     * @throws ReservationServiceException
+     * @throws RoomServiceException
+     */
     public ArrayList<Event> getEventsFromResultSet(ResultSet results) throws SQLException, UserRetrievalException, ReservationServiceException, RoomServiceException {
         ArrayList<Event> events = new ArrayList<>();
 
@@ -192,6 +249,16 @@ public class EventDAO extends DAO<Event> {
         return events;
     }
 
+    /**
+     * Utility to return a list of Event objects from the persistence layer ResultSet
+     * invoking the UserDAO to associate a User object to any event
+     * @param results ResultSet
+     * @return ArrayList<Event>
+     * @throws SQLException
+     * @throws UserRetrievalException
+     * @throws ReservationServiceException
+     * @throws RoomServiceException
+     */
     public ArrayList<Event> getEventsFromResultSet(ResultSet results, User referral) throws SQLException, RoomServiceException, ReservationServiceException {
         ArrayList<Event> events = new ArrayList<>();
 

@@ -8,6 +8,9 @@ import it.uniroma2.ispw.spotlight.database.EventDAO;
 import java.util.ArrayList;
 import java.util.Date;
 
+/**
+ * This class is a boundary to retrieve EventS
+ */
 public class EventLookupService extends DataAccessService<Event> {
 
     private Integer minRoleRequired = Constants.INFOPOINT_ROLE;
@@ -17,6 +20,17 @@ public class EventLookupService extends DataAccessService<Event> {
         setDatabaseInterface(new EventDAO());
     }
 
+    /**
+     * Return the events by name and start date
+     * @param eventName String
+     * @param start Date
+     * @return ArrayList<Event>
+     * @throws AuthRequiredException
+     * @throws UserRetrievalException
+     * @throws EventServiceException
+     * @throws ReservationServiceException
+     * @throws RoomServiceException
+     */
     public ArrayList<Event> getEventsByNameAndStartDate(String eventName, Date start) throws AuthRequiredException, UserRetrievalException, EventServiceException, ReservationServiceException, RoomServiceException {
         if (hasCapability(getCurrentUser())) {
             // retrieving all the events containing the given name

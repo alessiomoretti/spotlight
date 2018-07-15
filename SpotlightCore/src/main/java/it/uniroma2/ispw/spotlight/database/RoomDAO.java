@@ -13,6 +13,9 @@ import java.util.HashMap;
 import static java.sql.ResultSet.TYPE_SCROLL_INSENSITIVE;
 import static java.sql.Statement.NO_GENERATED_KEYS;
 
+/**
+ * This DAO acts as a controller of the Room objects at persistence level
+ */
 public class RoomDAO extends DAO<Room>{
 
     private ReservationDAO reservationDAO;
@@ -21,6 +24,12 @@ public class RoomDAO extends DAO<Room>{
         this.reservationDAO = new ReservationDAO();
     }
 
+    /**
+     * Return the list of all the rooms in the organization
+     * @return ArrayList<Room>
+     * @throws RoomServiceException
+     * @throws ReservationServiceException
+     */
     public ArrayList<Room> getAllRooms() throws RoomServiceException, ReservationServiceException {
         // preparing query to retrieve all the rooms
         String sql = "SELECT * FROM rooms";
@@ -56,6 +65,12 @@ public class RoomDAO extends DAO<Room>{
         }
     }
 
+    /**
+     * Return the Room associated with the given room identifier
+     * @param roomID String
+     * @return Room
+     * @throws RoomServiceException
+     */
     public Room getRoomByID(String roomID) throws RoomServiceException {
         // preparing query to retrieve the room
         String sql = "SELECT * FROM rooms WHERE roomID=?";
@@ -78,6 +93,13 @@ public class RoomDAO extends DAO<Room>{
         }
     }
 
+    /**
+     * Return all the rooms satisfying the given properties
+     * @param properties RoomProperties
+     * @return ArrayList<Room>
+     * @throws RoomServiceException
+     * @throws ReservationServiceException
+     */
     public ArrayList<Room> getRoomsByProperties(RoomProperties properties) throws RoomServiceException, ReservationServiceException {
         // preparing sql
         String sql = "SELECT * FROM rooms WHERE capacity >= ?";
@@ -117,6 +139,14 @@ public class RoomDAO extends DAO<Room>{
         }
     }
 
+    /**
+     * Return all the rooms satisfying the given properties in the selected department
+     * @param properties RoomProperties
+     * @param department String
+     * @return ArrayList<Room>
+     * @throws RoomServiceException
+     * @throws ReservationServiceException
+     */
     public ArrayList<Room> getRoomsByPropertiesAndDepartment(RoomProperties properties, String department) throws RoomServiceException, ReservationServiceException {
         // preparing sql
         String sql = "SELECT * FROM rooms WHERE capacity >= ? AND department = ?";
@@ -154,6 +184,13 @@ public class RoomDAO extends DAO<Room>{
         }
     }
 
+    /**
+     * Return all the rooms associated with the given referral (username)
+     * @param referral String, username
+     * @return ArrayList<Room>
+     * @throws RoomServiceException
+     * @throws ReservationServiceException
+     */
     public ArrayList<Room> getRoomsByReferral(String referral) throws RoomServiceException, ReservationServiceException {
         HashMap<String, Room> room_map = new HashMap<>();                           // auxiliary HashMap<roomID, room>
 
@@ -176,6 +213,13 @@ public class RoomDAO extends DAO<Room>{
         return new ArrayList<>(room_map.values());
     }
 
+    /**
+     * Return all the rooms associated with the given event identifier
+     * @param eventID String
+     * @return ArrayList<Room>
+     * @throws RoomServiceException
+     * @throws ReservationServiceException
+     */
     public ArrayList<Room> getRoomsByEvent(String eventID) throws RoomServiceException, ReservationServiceException {
         HashMap<String, Room> room_map = new HashMap<>();                           // auxiliary HashMap<roomID, room>
 
@@ -201,6 +245,11 @@ public class RoomDAO extends DAO<Room>{
         return new ArrayList<>(room_map.values());
     }
 
+    /**
+     * Return all the departments with at least a room in the organization
+     * @return ArrayList<String>
+     * @throws RoomServiceException
+     */
     public ArrayList<String> getDepartments() throws RoomServiceException {
         // preparing sql to retrieve all the departments
         String sql = "SELECT * FROM departments";
@@ -229,6 +278,11 @@ public class RoomDAO extends DAO<Room>{
         }
     }
 
+    /**
+     * Update a room (or create a new one) given a new Room representation
+     * @param room Room
+     * @throws RoomServiceException
+     */
     @Override
     public void update(Room room) throws RoomServiceException {
 
@@ -244,9 +298,20 @@ public class RoomDAO extends DAO<Room>{
 
     }
 
+    /**
+     * Delete the room - not implemented
+     * @param room
+     * @throws Exception
+     */
     @Override
     public void delete(Room room) throws Exception { /* no implementation needed */}
 
+    /**
+     * Return a Room from a given ResultSet
+     * @param results ResultSet
+     * @return Room
+     * @throws SQLException
+     */
     public Room createRoomFromResultSet(ResultSet results) throws SQLException {
 
         // creating room properties
@@ -264,6 +329,12 @@ public class RoomDAO extends DAO<Room>{
                         roomProperties);
     }
 
+    /**
+     * Return true if the requested properties are satisfied
+     * @param retrieved RoomProperties
+     * @param requested RoomProperties
+     * @return Boolean
+     */
     private boolean verifyProperties(RoomProperties retrieved, RoomProperties requested) {
         if (requested.hasProjector())
             if (!retrieved.hasProjector()) return false;

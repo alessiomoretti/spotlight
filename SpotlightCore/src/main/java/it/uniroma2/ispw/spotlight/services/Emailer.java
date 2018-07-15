@@ -3,6 +3,10 @@ package it.uniroma2.ispw.spotlight.services;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Stubbed class to emulate an email service sending confirmation and cancellation emails
+ * to the Event DLs and User email addresses
+ */
 public class Emailer {
 
     private final String confirmationTemplate = "";

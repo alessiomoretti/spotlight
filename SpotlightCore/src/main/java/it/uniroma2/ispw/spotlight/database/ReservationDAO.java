@@ -9,10 +9,19 @@ import java.util.ArrayList;
 import static java.sql.ResultSet.TYPE_SCROLL_INSENSITIVE;
 import static java.sql.Statement.NO_GENERATED_KEYS;
 
+/**
+ * This DAO acts as a controller of the Reservation objects at persistence level
+ */
 public class ReservationDAO extends DAO<Reservation> {
 
     public ReservationDAO() { }
 
+    /**
+     * Return the list of all the Reservations associated to the given event identifier
+     * @param eventID String
+     * @return ArrayList<Reservation>
+     * @throws ReservationServiceException
+     */
     public ArrayList<Reservation> getReservationsByEventID(String eventID) throws ReservationServiceException {
         // preparing query to retrieve all the reservations (present or future) related to a given event
         String sql = "SELECT * FROM reservations WHERE eventID=?";
@@ -34,6 +43,12 @@ public class ReservationDAO extends DAO<Reservation> {
         }
     }
 
+    /**
+     * Return the Reservation associated to a given unique identifier
+     * @param reservationID
+     * @return Reservation
+     * @throws ReservationServiceException
+     */
     public Reservation getReservationsByReservationID(String reservationID) throws ReservationServiceException {
         // preparing query to retrieve all the reservations (present or future) related to a given event
         String sql = "SELECT * FROM reservations WHERE resID=?";
@@ -55,6 +70,13 @@ public class ReservationDAO extends DAO<Reservation> {
         }
     }
 
+    /**
+     * Return the list of all the Reservations associated to a given event identifier and starting from the given timestamp
+     * @param eventID String
+     * @param timestamp Timestamp
+     * @return ArrayList<Reservation>
+     * @throws ReservationServiceException
+     */
     public ArrayList<Reservation> getReservationsByEventID(String eventID, Timestamp timestamp) throws ReservationServiceException {
         // preparing query to retrieve all the reservations (present or future) related to a given event
         String sql = "SELECT * FROM reservations WHERE eventID=? AND start_timestamp  >= ?";
@@ -77,6 +99,13 @@ public class ReservationDAO extends DAO<Reservation> {
         }
     }
 
+    /**
+     * Return the list of all the Reservations associated to a given room identifier and starting from the given timestamp
+     * @param roomID String
+     * @param timestamp Timestamp
+     * @return ArrayList<Reservation>
+     * @throws ReservationServiceException
+     */
     public ArrayList<Reservation> getReservationsByRoomID(String roomID, Timestamp timestamp) throws ReservationServiceException {
         // preparing query to retrieve all the reservations (present or future) related to a given event
         String sql = "SELECT * FROM reservations WHERE roomID=? AND start_timestamp >= ?";
@@ -99,6 +128,12 @@ public class ReservationDAO extends DAO<Reservation> {
         }
     }
 
+    /**
+     * Return the list of all the Reservations associated to a given room identifier
+     * @param roomID String
+     * @return ArrayList<Reservation>
+     * @throws ReservationServiceException
+     */
     public ArrayList<Reservation> getReservationsByRoomID(String roomID) throws ReservationServiceException {
         // preparing query to retrieve all the reservations (present or future) related to a given event
         String sql = "SELECT * FROM reservations WHERE roomID=?";
@@ -120,6 +155,14 @@ public class ReservationDAO extends DAO<Reservation> {
         }
     }
 
+    /**
+     * Return true if there is any Reservation in the given timeslot for the given room identifier
+     * @param roomID String
+     * @param startT Timestamp
+     * @param endT Timestamp
+     * @return Boolean
+     * @throws ReservationServiceException
+     */
     public boolean checkReservationsByRoomIDAndTimeslot(String roomID, Timestamp startT, Timestamp endT) throws ReservationServiceException {
         // preparing query to retrieve all the reservations in the given timeslot
         String sql = "SELECT * FROM reservations WHERE roomID=?"+
@@ -144,6 +187,13 @@ public class ReservationDAO extends DAO<Reservation> {
         }
     }
 
+    /**
+     * Return the list of all the Reservations associated to a referral (username) and starting from the given timestamp
+     * @param referral String, username
+     * @param timestamp Timestamp
+     * @return ArrayList<Reservation>
+     * @throws ReservationServiceException
+     */
     public ArrayList<Reservation> getReservationsByReferral(String referral, Timestamp timestamp) throws ReservationServiceException {
         // preparing query to retrieve all the reservations (present or future) related to a given referral
         String sql = "SELECT * FROM reservations WHERE referral=? AND start_timestamp >= ?";
@@ -166,6 +216,12 @@ public class ReservationDAO extends DAO<Reservation> {
         }
     }
 
+    /**
+     * Return the list of all the Reservations associated to a referral (username)
+     * @param referral String
+     * @return ArrayList<Reservation>
+     * @throws ReservationServiceException
+     */
     public ArrayList<Reservation> getReservationsByReferral(String referral) throws ReservationServiceException {
         // preparing query to retrieve all the reservations (present or future) related to a given referral
         String sql = "SELECT * FROM reservations WHERE referral=?";
@@ -187,6 +243,11 @@ public class ReservationDAO extends DAO<Reservation> {
         }
     }
 
+    /**
+     * Update a Reservation (or create a new one) given a new Reservation representation
+     * @param reservation Reservation
+     * @throws ReservationServiceException
+     */
     @Override
     public void update(Reservation reservation) throws ReservationServiceException {
         // preparing update query
@@ -218,6 +279,11 @@ public class ReservationDAO extends DAO<Reservation> {
 
     }
 
+    /**
+     * Delete the reservation
+     * @param reservation Reservation
+     * @throws ReservationServiceException
+     */
     @Override
     public void delete(Reservation reservation) throws ReservationServiceException {
         try {
@@ -240,6 +306,12 @@ public class ReservationDAO extends DAO<Reservation> {
         }
     }
 
+    /**
+     * Utility to return a list of Reservation objects from the persistence layer ResultSet
+     * @param results ResultSet
+     * @return ArrayList<Reservation>
+     * @throws SQLException
+     */
     public ArrayList<Reservation> getReservationsFromResultSet(ResultSet results) throws SQLException {
         ArrayList<Reservation> reservations = new ArrayList<>();
 
